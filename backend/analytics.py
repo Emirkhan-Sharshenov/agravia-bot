@@ -15,17 +15,18 @@ import json
 import time
 from pathlib import Path
 
-BASE_DIR = Path(__file__).parent
-LOG_DIR = BASE_DIR / "logs"
-LOG_DIR.mkdir(exist_ok=True)
+from log_paths import LOG_DIR
 
 ANALYTICS_LOG = LOG_DIR / "analytics.jsonl"
 UNANSWERED_LOG = LOG_DIR / "unanswered.jsonl"
 
 
 def _append(path: Path, payload: dict) -> None:
-    with path.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    try:
+        with path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    except OSError:
+        pass  # best-effort: read-only FS (напр. serverless) не должен ронять ответ пользователю
 
 
 def log_event(

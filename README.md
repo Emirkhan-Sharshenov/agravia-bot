@@ -205,6 +205,34 @@ uvicorn main:app --reload --port 8811
   регулярно разбирать на Фазе 8 роадмапа (какие вопросы не покрыты
   базой, где бот ошибался).
 
+### Деплой на Vercel
+
+В репозитории уже есть `vercel.json` + `api/index.py` (реэкспортирует
+FastAPI `app` из `backend/main.py`) и корневой `requirements.txt` — просто
+подключите репозиторий в Vercel, framework preset можно оставить "Other".
+
+1. **Project → Settings → Environment Variables** — добавьте как минимум
+   `LLM_PROVIDER` и `GROQ_API_KEY` (или `GIGACHAT_AUTH_KEY` +
+   `LLM_PROVIDER=gigachat` для production, см. выше); опционально
+   `TELEGRAM_BOT_TOKEN`/`TELEGRAM_MANAGER_CHAT_ID`.
+2. **Deployments → ⋯ → Redeploy** — переменные окружения применяются
+   только к новым деплоям.
+3. Виджет отдаётся тем же бэкендом по `/widget/widget.js` — на сайте
+   укажите `data-api="https://ВАШ-ПРОЕКТ.vercel.app/api"`.
+
+Важные ограничения serverless-окружения (учтено в коде, но держите в
+уме): файловая система деплоя read-only везде, кроме `/tmp` —
+`backend/log_paths.py` автоматически откатывает логи и кэш embedding-
+векторов (`kb_embeddings_cache.json`) туда, если `backend/logs` не
+доступен для записи. Но `/tmp` не персистентен между вызовами функции,
+поэтому: (а) `logs/*.jsonl` там ничего не накопят — для реальной
+аналитики (раздел 18-19 ТЗ) в этом сценарии нужна внешняя БД, а не
+файлы; (б) кэш embeddings может пересчитываться на каждом холодном
+старте, расходуя лимит токенов GigaChat. In-memory `SESSIONS` в
+`alice.py` (навык Алисы) по той же причине ненадёжен на serverless —
+для сайта это не влияет, `/api/chat` и так не хранит состояние на
+сервере (историю диалога передаёт сам виджет).
+
 ## Обновление базы знаний
 
 `kb.json` теперь состоит из трёх сегментов (раздел 4 ТЗ): `common`

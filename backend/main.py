@@ -12,12 +12,12 @@ import chat_engine
 import kb_store
 from alice import router as alice_router
 from handoff import send_to_manager
+from log_paths import LOG_DIR
 import analytics
 
 BASE_DIR = Path(__file__).parent
 KB = kb_store.KB
-DIALOG_LOG = BASE_DIR / "logs" / "dialogs.jsonl"
-DIALOG_LOG.parent.mkdir(exist_ok=True)
+DIALOG_LOG = LOG_DIR / "dialogs.jsonl"
 
 app = FastAPI(title="AGRAVIA AI Chat Bot «Алиса»")
 
@@ -59,8 +59,11 @@ class HandoffRequest(BaseModel):
 
 
 def _log_dialog(**kwargs) -> None:
-    with DIALOG_LOG.open("a", encoding="utf-8") as f:
-        f.write(json.dumps({**kwargs, "ts": time.time()}, ensure_ascii=False) + "\n")
+    try:
+        with DIALOG_LOG.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({**kwargs, "ts": time.time()}, ensure_ascii=False) + "\n")
+    except OSError:
+        pass  # best-effort: read-only FS (напр. serverless) не должен ронять ответ пользователю
 
 
 @app.get("/api/health")
