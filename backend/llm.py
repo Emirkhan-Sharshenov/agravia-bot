@@ -275,7 +275,13 @@ def _groq_chat(system: str, messages: list[dict], max_tokens: int) -> str:
     api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
         raise RuntimeError("GROQ_API_KEY не задан в переменных окружения")
-    model = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+    # llama-3.1-8b-instant / llama-3.3-70b-versatile стали Enterprise-only
+    # ("ContactSales") на обычных ключах Groq и отдают 404 model_not_found —
+    # openai/gpt-oss-20b доступна на обычном developer-тарифе (см. полный
+    # список: https://console.groq.com/docs/models). Переопределяется через
+    # GROQ_MODEL, если понадобится другая модель (например openai/gpt-oss-120b
+    # для более качественных ответов ценой скорости).
+    model = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
     resp = httpx.post(
         GROQ_CHAT_URL,
         headers={
