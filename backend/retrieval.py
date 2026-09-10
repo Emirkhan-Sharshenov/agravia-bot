@@ -231,6 +231,43 @@ def _context_text(message: str, history: list[dict] | None) -> str | None:
 # местоимения ("там", "воду" после "необорудованная площадь").
 CURRENT_MESSAGE_WEIGHT = float(os.environ.get("CURRENT_MESSAGE_WEIGHT", "0.75"))
 
+# Но короткие "эллиптические" ответы (раздел 4.4 ТЗ: "Уточните — вы
+# посетитель или экспонент?" -> "посетитель") почти не несут собственного
+# смысла сами по себе — это ответ на предыдущий уточняющий вопрос бота, а
+# не новая тема. Если веса не поменять местами, такая короткая реплика
+# "перевешивает" настоящий вопрос из предыдущего хода и топит его.
+SHORT_REPLY_WORD_THRESHOLD = int(os.environ.get("SHORT_REPLY_WORD_THRESHOLD", "3"))
+SHORT_REPLY_CURRENT_WEIGHT = float(os.environ.get("SHORT_REPLY_CURRENT_WEIGHT", "0.3"))
+
+
+def _effective_current_weight(message: str) -> float:
+    if len(message.split()) <= SHORT_REPLY_WORD_THRESHOLD:
+        return SHORT_REPLY_CURRENT_WEIGHT
+    return CURRENT_MESSAGE_WEIGHT
+
+
+# Раздел 4.4 ТЗ: после уточняющего вопроса про роль ("вы посетитель или
+# экспонент?") пользователь обычно отвечает коротко и прямо. Такой ответ
+# однозначен по своей природе — его не нужно прогонять через content-скоринг
+# наравне с обычными вопросами (там он снова может попасть в "uncertain" по
+# сырым скорам темы, как это уже было исправлено выше весами контекста).
+_VISITOR_ROLE_WORDS = {"посетитель", "посетителя", "посетителем", "гость", "гостем"}
+_EXHIBITOR_ROLE_WORDS = {
+    "экспонент", "экспонента", "экспонентом", "участник", "участника", "участником",
+}
+
+
+def _explicit_role_reply(message: str) -> str | None:
+    words = message.lower().split()
+    if len(words) > SHORT_REPLY_WORD_THRESHOLD:
+        return None
+    cleaned = {w.strip(".,!?;:()«»\"'") for w in words}
+    if cleaned & _VISITOR_ROLE_WORDS:
+        return "visitor"
+    if cleaned & _EXHIBITOR_ROLE_WORDS:
+        return "exhibitor"
+    return None
+
 
 def build_search_query(message: str, history: list[dict] | None) -> str:
     """Оставлено для обратной совместимости/отладки — человекочитаемое
@@ -281,8 +318,9 @@ def _score_all(message: str, history: list[dict] | None) -> tuple[list[float], b
         return per_query_item_scores[0], used_semantic
 
     current_scores, context_scores = per_query_item_scores
+    weight = _effective_current_weight(message)
     combined = [
-        CURRENT_MESSAGE_WEIGHT * cs + (1 - CURRENT_MESSAGE_WEIGHT) * xs
+        weight * cs + (1 - weight) * xs
         for cs, xs in zip(current_scores, context_scores)
     ]
     return combined, used_semantic
@@ -324,8 +362,11 @@ def search(message: str, history: list[dict] | None = None) -> SearchResult:
     ambiguous_role = False
     role_max = max(visitor_top, exhibitor_top)
     role_ambiguous_now = abs(visitor_top - exhibitor_top) <= ROLE_AMBIGUITY_MARGIN and role_max >= low
+    explicit_role = _explicit_role_reply(message)
 
-    if common_top >= role_max + ROLE_AMBIGUITY_MARGIN:
+    if explicit_role is not None:
+        segment = explicit_role
+    elif common_top >= role_max + ROLE_AMBIGUITY_MARGIN:
         segment = "common"
     elif role_ambiguous_now:
         segment = "uncertain"
