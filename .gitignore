@@ -1,0 +1,17 @@
+# Python / venv
+backend/venv/
+__pycache__/
+*.pyc
+
+# Секреты
+.env
+backend/.env
+
+# Логи (jsonl растут в рантайме, содержат данные пользователей)
+backend/logs/*.jsonl
+
+# Кэш embedding-векторов базы знаний (генерируется автоматически)
+backend/kb_embeddings_cache.json
+
+# OS/editor
+.DS_Store
