@@ -290,7 +290,11 @@ def _groq_chat(system: str, messages: list[dict], max_tokens: int) -> str:
         },
         timeout=20,
     )
-    resp.raise_for_status()
+    if resp.status_code >= 400:
+        # raise_for_status() не включает тело ответа, а у Groq (и вообще
+        # OpenAI-совместимых API) именно в теле лежит причина — например,
+        # "model_not_found" для недействительного/устаревшего GROQ_MODEL.
+        raise RuntimeError(f"Groq API error {resp.status_code}: {resp.text}")
     data = resp.json()
     return data["choices"][0]["message"]["content"].strip()
 
