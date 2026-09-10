@@ -4,14 +4,29 @@
 это должно быть жёстко закреплено в логике, а не просто пожеланием.
 
 Провайдер выбирается переменной окружения LLM_PROVIDER:
-  - "gigachat"  (по умолчанию) — GigaChat API (Сбер). Бесплатный лимит
-    1 000 000 токенов/мес на физлицо, работает из России без VPN.
-    Нужны: GIGACHAT_AUTH_KEY (Authorization key из личного кабинета
-    Sber Developers) и сертификат НУЦ Минцифры (см. README).
-  - "anthropic" — Claude API. Платный, но без региональных проблем
-    доступа, если сервер не в России. Нужен ANTHROPIC_API_KEY.
+  - "groq" (по умолчанию для разработки) — Groq API (Llama и т.п.).
+    Бесплатный и самый простой в настройке: не нужен сертификат НУЦ
+    Минцифры, только GROQ_API_KEY. ВАЖНО: это зарубежный AI API — по
+    разделу 13.3 ТЗ "AI-бот AGRAVIA 2027" такие провайдеры (в списке
+    прямо назван Groq, а также OpenAI/Anthropic/Gemini) запрещены для
+    production без отдельного согласования. Используйте для локальной
+    разработки/демо; перед боевым запуском переключитесь на
+    "gigachat" (согласованный Вариант B, раздел 13.2 ТЗ) либо на
+    локальную LLM (Вариант A, раздел 13.1 ТЗ).
+  - "gigachat" — GigaChat API (Сбер). Бесплатный лимит 1 000 000
+    токенов/мес на физлицо, работает из России без VPN, соответствует
+    согласованному Варианту B. Нужны: GIGACHAT_AUTH_KEY (Authorization
+    key из личного кабинета Sber Developers) и сертификат НУЦ Минцифры
+    (см. README). Также единственный из трёх, кто отдаёт embeddings
+    для семантического поиска (см. embed_texts ниже) — независимо от
+    выбранного LLM_PROVIDER, если GIGACHAT_AUTH_KEY задан, поиск в
+    retrieval.py всё равно будет семантическим.
+  - "anthropic" — Claude API. Платный, без региональных проблем
+    доступа, если сервер не в России. Нужен ANTHROPIC_API_KEY. Как и
+    Groq, требует отдельного согласования перед production (раздел
+    13.3 ТЗ).
 
-Обе реализации отдают наружу один и тот же интерфейс: answer(...).
+Все реализации отдают наружу один и тот же интерфейс: answer(...).
 """
 import os
 import time
@@ -248,7 +263,55 @@ def _anthropic_answer(segment: str, user_message: str, candidates, history: list
 
 
 # ---------------------------------------------------------------------
-# Публичный интерфейс
+# Groq (по умолчанию для разработки — см. предупреждение в docstring
+# модуля про раздел 13.3 ТЗ). API OpenAI-совместимый, отдельный SDK не
+# нужен — обычный REST-запрос через httpx, как и для GigaChat.
+# ---------------------------------------------------------------------
+
+GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
+
+
+def _groq_chat(system: str, messages: list[dict], max_tokens: int) -> str:
+    api_key = os.environ.get("GROQ_API_KEY", "")
+    if not api_key:
+        raise RuntimeError("GROQ_API_KEY не задан в переменных окружения")
+    model = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+    resp = httpx.post(
+        GROQ_CHAT_URL,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+        json={
+            "model": model,
+            "messages": [{"role": "system", "content": system}] + messages,
+            "temperature": 0.3,
+            "max_tokens": max_tokens,
+        },
+        timeout=20,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    return data["choices"][0]["message"]["content"].strip()
+
+
+def _groq_answer(segment: str, user_message: str, candidates, history: list[dict] | None) -> str | None:
+    system = _build_system_prompt(segment, candidates)
+    messages = list(history or []) + [{"role": "user", "content": user_message}]
+    text = _groq_chat(system, messages, max_tokens=600)
+
+    if NO_MATCH_MARKER in text:
+        return None
+    return text
+
+
+def _groq_clarify(candidates) -> str:
+    system = _build_clarify_prompt(candidates)
+    return _groq_chat(system, [{"role": "user", "content": "Задай уточняющий вопрос."}], max_tokens=200)
+
+
+# ---------------------------------------------------------------------
+# Уточняющий вопрос (раздел 10 ТЗ) — реализации по провайдерам
 # ---------------------------------------------------------------------
 
 def _gigachat_clarify(candidates) -> str:
@@ -284,20 +347,26 @@ def answer(segment: str, user_message: str, candidates, history: list[dict] | No
     вернула NO_MATCH (тема не покрыта базой / не тот сегмент /
     попытка выйти за рамки).
     """
-    provider = os.environ.get("LLM_PROVIDER", "gigachat").lower()
+    provider = os.environ.get("LLM_PROVIDER", "groq").lower()
+    if provider == "groq":
+        return _groq_answer(segment, user_message, candidates, history)
     if provider == "anthropic":
         return _anthropic_answer(segment, user_message, candidates, history)
     if provider == "gigachat":
         return _gigachat_answer(segment, user_message, candidates, history)
-    raise RuntimeError(f"Неизвестный LLM_PROVIDER: {provider!r} (ожидается 'gigachat' или 'anthropic')")
+    raise RuntimeError(
+        f"Неизвестный LLM_PROVIDER: {provider!r} (ожидается 'groq', 'gigachat' или 'anthropic')"
+    )
 
 
 def clarify(candidates) -> str:
     """Раздел 10 ТЗ: короткий уточняющий вопрос при MEDIUM confidence."""
-    provider = os.environ.get("LLM_PROVIDER", "gigachat").lower()
+    provider = os.environ.get("LLM_PROVIDER", "groq").lower()
     if provider == "anthropic":
         return _anthropic_clarify(candidates)
-    return _gigachat_clarify(candidates)
+    if provider == "gigachat":
+        return _gigachat_clarify(candidates)
+    return _groq_clarify(candidates)
 
 
 def embed_texts(texts: list[str]) -> list[list[float]] | None:
