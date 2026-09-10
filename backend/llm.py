@@ -308,7 +308,11 @@ def _groq_chat(system: str, messages: list[dict], max_tokens: int) -> str:
 def _groq_answer(segment: str, user_message: str, candidates, history: list[dict] | None) -> str | None:
     system = _build_system_prompt(segment, candidates)
     messages = list(history or []) + [{"role": "user", "content": user_message}]
-    text = _groq_chat(system, messages, max_tokens=600)
+    # gpt-oss — reasoning-модель: часть max_tokens уходит на скрытые
+    # рассуждения до финального ответа, поэтому бюджет заметно больше, чем
+    # нужен был бы просто на текст ответа (иначе content приходит пустым —
+    # ушли все токены на reasoning, ничего не осталось на сам ответ).
+    text = _groq_chat(system, messages, max_tokens=1000)
 
     if NO_MATCH_MARKER in text:
         return None
@@ -317,7 +321,9 @@ def _groq_answer(segment: str, user_message: str, candidates, history: list[dict
 
 def _groq_clarify(candidates) -> str:
     system = _build_clarify_prompt(candidates)
-    return _groq_chat(system, [{"role": "user", "content": "Задай уточняющий вопрос."}], max_tokens=200)
+    return _groq_chat(
+        system, [{"role": "user", "content": "Задай уточняющий вопрос."}], max_tokens=600
+    )
 
 
 # ---------------------------------------------------------------------

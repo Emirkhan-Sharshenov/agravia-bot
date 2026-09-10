@@ -24,6 +24,14 @@ ROLE_CLARIFY_REPLY = (
     "Уточните, пожалуйста: вы посетитель выставки или экспонент (участник)?"
 )
 
+# Раздел 10 ТЗ ожидает КОРОТКИЙ уточняющий вопрос, но если LLM вдруг вернёт
+# пустую строку (например, reasoning-модель израсходовала весь бюджет
+# токенов на скрытые рассуждения, не оставив ничего на сам ответ) — лучше
+# показать общий вопрос, чем пустое сообщение в чате.
+GENERIC_CLARIFY_REPLY = (
+    "Уточните, пожалуйста, ваш вопрос — так я смогу подобрать точный ответ."
+)
+
 
 @dataclass
 class EngineResult:
@@ -62,7 +70,7 @@ def handle_message(session_id: str, message: str, history: list[dict] | None = N
             fallback=True,
         )
     elif result.confidence == "MEDIUM":
-        clarifying_question = llm.clarify(result.candidates)
+        clarifying_question = llm.clarify(result.candidates).strip() or GENERIC_CLARIFY_REPLY
         out = EngineResult(
             reply=clarifying_question,
             segment=result.segment,
