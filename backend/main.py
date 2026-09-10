@@ -119,5 +119,10 @@ async def handoff(req: HandoffRequest):
 app.include_router(alice_router)
 
 # Отдаём файлы виджета (widget.js, demo.html) с того же бэкенда для простоты,
-# в проде их обычно кладут на CDN/сам сайт.
-app.mount("/widget", StaticFiles(directory=str(BASE_DIR.parent / "widget")), name="widget")
+# в проде их обычно кладут на CDN/сам сайт. StaticFiles падает с RuntimeError
+# на старте, если каталога нет (например, деплой с Root Directory=backend/ —
+# widget/ на уровень выше и не попадает в бандл) — это крашило бы ВЕСЬ app,
+# а не только /widget, поэтому монтируем только если каталог реально на месте.
+_WIDGET_DIR = BASE_DIR.parent / "widget"
+if _WIDGET_DIR.is_dir():
+    app.mount("/widget", StaticFiles(directory=str(_WIDGET_DIR)), name="widget")
