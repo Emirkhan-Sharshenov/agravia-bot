@@ -11,9 +11,12 @@ exhibitor / uncertain — раздел 4 ТЗ) без обязательного
      (kb_embeddings_cache.json), чтобы не тратить лимит токенов на
      каждый рестарт бэкенда.
   2. Fallback (если embedding-провайдер недоступен — нет ключа или сбой
-     сети): fuzzy-скоринг (rapidfuzz/difflib), как в прошлой версии.
-     Это хуже "переживает" перефразировки, но не даёт сервису упасть
-     целиком без интернета/ключа при локальной разработке.
+     сети): fuzzy-скоринг (rapidfuzz/difflib) со стеммингом (snowballstemmer,
+     если установлен) — без него сравнение "билеты" со словом "билет" в
+     базе даёт совпадение только по 5 из 6 букв, а не 100%, потому что
+     русский язык сильно словоизменяемый (падежи, числа). Это всё равно
+     хуже "переживает" перефразировки, чем реальные embeddings, но не даёт
+     сервису упасть целиком без интернета/ключа при локальной разработке.
 
 Пороги confidence (HIGH/MEDIUM/LOW, раздел 11 ТЗ) заданы через переменные
 окружения с дефолтами ниже. ТЗ прямо требует калибровать их по тестовому
@@ -39,6 +42,12 @@ except ImportError:  # pragma: no cover - fallback path
     import difflib
     _HAS_RAPIDFUZZ = False
 
+try:
+    import snowballstemmer
+    _RU_STEMMER = snowballstemmer.stemmer("russian")
+except ImportError:  # pragma: no cover - fallback path
+    _RU_STEMMER = None
+
 import llm
 
 BASE_DIR = Path(__file__).parent
@@ -51,7 +60,10 @@ EMBEDDINGS_CACHE_PATH = BASE_DIR / "kb_embeddings_cache.json"
 EMB_HIGH = float(os.environ.get("SEMANTIC_HIGH_THRESHOLD", "0.78"))
 EMB_LOW = float(os.environ.get("SEMANTIC_LOW_THRESHOLD", "0.55"))
 FUZZY_HIGH = float(os.environ.get("FUZZY_HIGH_THRESHOLD", "0.72"))
-FUZZY_LOW = float(os.environ.get("FUZZY_LOW_THRESHOLD", "0.54"))
+# Стемминг (см. _stem ниже) заметно поднимает fuzzy-скор в среднем — слова
+# сравниваются по основе, а не по точной форме — поэтому нижний порог тоже
+# пришлось поднять, иначе посторонние темы стали давать MEDIUM вместо LOW.
+FUZZY_LOW = float(os.environ.get("FUZZY_LOW_THRESHOLD", "0.62"))
 
 # Если топ-скор двух ролевых сегментов (visitor/exhibitor) отличается не
 # больше, чем на эту величину — считаем, что роль пользователя неоднозначна
@@ -127,8 +139,21 @@ def _strip_stopwords(text: str) -> str:
     return " ".join(words) if words else text
 
 
+def _stem(text: str) -> str:
+    """Приводит слова к основе (падежи/числа/времена), если доступен
+    snowballstemmer — "билеты" и "билет", "дате" и "даты" иначе совпадают
+    лишь частично по буквам, а не как одно и то же слово."""
+    if _RU_STEMMER is None:
+        return text
+    words = text.split()
+    if not words:
+        return text
+    return " ".join(_RU_STEMMER.stemWords(words))
+
+
 def _fuzzy_score(a: str, b: str) -> float:
-    a, b = _strip_stopwords(a.lower().strip()), _strip_stopwords(b.lower().strip())
+    a = _stem(_strip_stopwords(a.lower().strip()))
+    b = _stem(_strip_stopwords(b.lower().strip()))
     if _HAS_RAPIDFUZZ:
         return fuzz.token_set_ratio(a, b) / 100.0
     return difflib.SequenceMatcher(None, a, b).ratio()
@@ -413,15 +438,31 @@ def search(message: str, history: list[dict] | None = None) -> SearchResult:
         confidence = "LOW"
 
     # Дополнительный признак неоднозначности темы (не только роли): топ-1 и
-    # топ-2 кандидата из разных интентов близки друг к другу по скору —
-    # снижаем уверенность до MEDIUM, даже если сам скор высокий. Порог
-    # относительный (доля от топ-1), а не абсолютный, чтобы работать и на
-    # высоких, и на средних скорах. NB: с fuzzy-fallback (без embeddings)
-    # этот эвристический сигнал слабее, чем с реальным semantic search —
-    # см. docstring модуля и раздел 11 ТЗ про калибровку порогов.
+    # топ-2 кандидата из РАЗНЫХ КАТЕГОРИЙ близки друг к другу по скору —
+    # снижаем уверенность до MEDIUM, даже если сам скор высокий. Сравниваем
+    # именно категорию, а не intent: два разных intent-а из одной категории
+    # (например, "как заказать электричество на стенде" и "как подключить
+    # стенд к электричеству на необорудованной площади" — оба из
+    # "Электропитание") — это не неоднозначность, а несколько релевантных
+    # фактов по одной теме, которые LLM и так объединит в ответе (раздел 8
+    # ТЗ, RAG). Порог относительный (доля от топ-1), а не абсолютный, чтобы
+    # работать и на высоких, и на средних скорах. NB: с fuzzy-fallback (без
+    # embeddings) этот эвристический сигнал слабее, чем с реальным semantic
+    # search — см. docstring модуля и раздел 11 ТЗ про калибровку порогов.
+    # Второй сигнал неоднозначности: даже в ОДНОЙ категории генерическое
+    # слово ("пропуск") может дать МНОГО (3+) равно правдоподобных, но
+    # взаимоисключающих кандидатов (бейдж / монтажный пропуск / пропуск
+    # ПРР — раздел 10 ТЗ, обязательный пример уточнения) — это не "несколько
+    # дополняющих друг друга фактов", а реальный выбор между вариантами.
+    # Отличается от электропитания тем, что там кандидатов с высоким
+    # скором всего два, а тут — сразу пять-шесть.
     if confidence == "HIGH" and len(candidates) >= 2:
         top1, top2 = candidates[0], candidates[1]
-        if top1.intent != top2.intent and top1.score > 0 and (top2.score / top1.score) >= 0.75:
+        near_top_count = sum(1 for c in candidates if top1.score > 0 and c.score / top1.score >= 0.75)
+        if top1.score > 0 and (
+            (top1.category != top2.category and (top2.score / top1.score) >= 0.75)
+            or near_top_count >= 3
+        ):
             confidence = "MEDIUM"
 
     return SearchResult(
