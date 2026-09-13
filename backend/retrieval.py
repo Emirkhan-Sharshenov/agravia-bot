@@ -236,12 +236,29 @@ CURRENT_MESSAGE_WEIGHT = float(os.environ.get("CURRENT_MESSAGE_WEIGHT", "0.75"))
 # смысла сами по себе — это ответ на предыдущий уточняющий вопрос бота, а
 # не новая тема. Если веса не поменять местами, такая короткая реплика
 # "перевешивает" настоящий вопрос из предыдущего хода и топит его.
+#
+# ВАЖНО: короткая длина сама по себе — плохой признак. "о дате" или "что
+# насчёт билетов" тоже короткие, но это самостоятельные новые вопросы, а
+# не ответ на уточнение — им, наоборот, нужен полный вес на себя. Поэтому
+# инверсию весов включаем ТОЛЬКО когда предыдущая реплика БОТА похожа на
+# уточняющий вопрос (заканчивается на "?" — так оканчиваются и
+# ROLE_CLARIFY_REPLY, и llm.clarify(), но не обычные ответы по базе и не
+# NO_MATCH_REPLY). Без этого условия короткие самостоятельные вопросы
+# после любого предыдущего хода ошибочно "тонут" в чужом контексте.
 SHORT_REPLY_WORD_THRESHOLD = int(os.environ.get("SHORT_REPLY_WORD_THRESHOLD", "3"))
 SHORT_REPLY_CURRENT_WEIGHT = float(os.environ.get("SHORT_REPLY_CURRENT_WEIGHT", "0.3"))
 
 
-def _effective_current_weight(message: str) -> float:
-    if len(message.split()) <= SHORT_REPLY_WORD_THRESHOLD:
+def _last_bot_turn_is_clarifying(history: list[dict] | None) -> bool:
+    for turn in reversed(history or []):
+        if turn.get("role") == "assistant":
+            return turn.get("content", "").strip().endswith("?")
+    return False
+
+
+def _effective_current_weight(message: str, history: list[dict] | None) -> float:
+    is_short = len(message.split()) <= SHORT_REPLY_WORD_THRESHOLD
+    if is_short and _last_bot_turn_is_clarifying(history):
         return SHORT_REPLY_CURRENT_WEIGHT
     return CURRENT_MESSAGE_WEIGHT
 
@@ -318,7 +335,7 @@ def _score_all(message: str, history: list[dict] | None) -> tuple[list[float], b
         return per_query_item_scores[0], used_semantic
 
     current_scores, context_scores = per_query_item_scores
-    weight = _effective_current_weight(message)
+    weight = _effective_current_weight(message, history)
     combined = [
         weight * cs + (1 - weight) * xs
         for cs, xs in zip(current_scores, context_scores)

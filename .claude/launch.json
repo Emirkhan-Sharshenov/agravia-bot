@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "8095", "--directory", "widget"],
       "port": 8095
+    },
+    {
+      "name": "root-static",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8096"],
+      "port": 8096
     }
   ]
 }
