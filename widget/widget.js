@@ -234,6 +234,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         session_id: state.sessionId,
+        segment_hint: state.segment, // "прилипшая" роль текущего диалога (visitor/exhibitor), если уже определена
         message: text,
         history: state.history.slice(0, -1), // без последнего user-сообщения, оно уже в message
       }),

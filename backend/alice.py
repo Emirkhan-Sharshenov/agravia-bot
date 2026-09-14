@@ -144,7 +144,9 @@ async def alice_webhook(request: Request):
 
     # --- этап: обычный чат по базе знаний (сегмент определяется автоматически) ---
     if state["stage"] == "chat":
-        result = chat_engine.handle_message(session_id, command, history=state["history"])
+        result = chat_engine.handle_message(
+            session_id, command, history=state["history"], segment_hint=state["segment"]
+        )
         state["segment"] = result.segment
 
         if result.fallback:

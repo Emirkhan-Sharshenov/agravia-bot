@@ -31,11 +31,13 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     session_id: str | None = None
-    # Раздел 2.1 ТЗ: выбор роли больше не обязателен перед началом диалога —
-    # сегмент определяется автоматически внутри chat_engine. Поле оставлено
-    # опциональным на случай, если фронтенд захочет передать подсказку
-    # (например, пользователь нажал быструю кнопку "Стать участником"), но
-    # сейчас не используется как жёсткий гейт.
+    # Раздел 2.1 ТЗ: выбор роли по-прежнему НЕ обязателен перед началом
+    # диалога — сегмент определяется автоматически. Но роль, однажды
+    # определённая в рамках диалога, должна "прилипать" (фидбэк 2026-09-14:
+    # короткие follow-up-вопросы не должны заново переопределять роль с
+    # нуля) — фронтенд присылает сюда последний segment из ответа, а
+    # retrieval.search() лишь слегка подталкивает эту роль, не блокируя
+    # переключение при явном сигнале другой роли.
     segment_hint: str | None = None
     message: str
     history: list[dict] = []  # [{"role": "user"/"assistant", "content": "..."}]
@@ -80,7 +82,9 @@ def health():
 async def chat(req: ChatRequest):
     session_id = req.session_id or str(uuid.uuid4())
 
-    result = chat_engine.handle_message(session_id, req.message, history=req.history)
+    result = chat_engine.handle_message(
+        session_id, req.message, history=req.history, segment_hint=req.segment_hint
+    )
 
     _log_dialog(
         session_id=session_id,

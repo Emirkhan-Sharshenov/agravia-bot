@@ -30,6 +30,7 @@ import hashlib
 import json
 import math
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -69,6 +70,15 @@ FUZZY_LOW = float(os.environ.get("FUZZY_LOW_THRESHOLD", "0.62"))
 # больше, чем на эту величину — считаем, что роль пользователя неоднозначна
 # (раздел 4.4 ТЗ), и просим один уточняющий вопрос вместо угадывания.
 ROLE_AMBIGUITY_MARGIN = float(os.environ.get("ROLE_AMBIGUITY_MARGIN", "0.08"))
+
+# Насколько подталкивать скор роли, уже установленной в диалоге (см.
+# segment_hint в search()), чтобы короткие follow-up-вопросы оставались в
+# той же роли, а не переключались от случайного совпадения слова.
+SEGMENT_HINT_BONUS = float(os.environ.get("SEGMENT_HINT_BONUS", "0.12"))
+
+# Порог (доля от топ-1) для счётчика "много равно правдоподобных
+# кандидатов" — см. комментарий у near_top_count в search().
+NEAR_TOP_COUNT_RATIO = float(os.environ.get("NEAR_TOP_COUNT_RATIO", "0.92"))
 
 # Сколько предыдущих реплик пользователя учитывать при построении
 # поискового запроса, чтобы разрешать контекст ("а воду как подключить?"
@@ -274,7 +284,10 @@ SHORT_REPLY_WORD_THRESHOLD = int(os.environ.get("SHORT_REPLY_WORD_THRESHOLD", "3
 SHORT_REPLY_CURRENT_WEIGHT = float(os.environ.get("SHORT_REPLY_CURRENT_WEIGHT", "0.3"))
 
 
-def _last_bot_turn_is_clarifying(history: list[dict] | None) -> bool:
+def last_bot_turn_is_clarifying(history: list[dict] | None) -> bool:
+    """Публичная: используется и здесь, и в chat_engine.py — там нужно
+    знать, что предыдущий ход бота уже был уточняющим вопросом, чтобы не
+    задавать уточнение второй раз подряд (раздел 4.4/10 ТЗ)."""
     for turn in reversed(history or []):
         if turn.get("role") == "assistant":
             return turn.get("content", "").strip().endswith("?")
@@ -283,23 +296,41 @@ def _last_bot_turn_is_clarifying(history: list[dict] | None) -> bool:
 
 def _effective_current_weight(message: str, history: list[dict] | None) -> float:
     is_short = len(message.split()) <= SHORT_REPLY_WORD_THRESHOLD
-    if is_short and _last_bot_turn_is_clarifying(history):
+    if is_short and last_bot_turn_is_clarifying(history):
         return SHORT_REPLY_CURRENT_WEIGHT
     return CURRENT_MESSAGE_WEIGHT
 
 
-# Раздел 4.4 ТЗ: после уточняющего вопроса про роль ("вы посетитель или
-# экспонент?") пользователь обычно отвечает коротко и прямо. Такой ответ
-# однозначен по своей природе — его не нужно прогонять через content-скоринг
-# наравне с обычными вопросами (там он снова может попасть в "uncertain" по
-# сырым скорам темы, как это уже было исправлено выше весами контекста).
+# Раздел 4.4 ТЗ: и короткий прямой ответ на уточняющий вопрос про роль
+# ("вы посетитель или экспонент?" -> "посетитель"), и явное самоопределение
+# роли внутри более длинного сообщения ("Хочу приехать КАК посетитель") —
+# однозначны по своей природе и не должны прогоняться через content-скоринг
+# наравне с обычными вопросами (иначе снова могут попасть в "uncertain" по
+# сырым скорам темы либо быть неверно классифицированы через совпадение
+# слова "экспонент"/"посетитель" в чужом контексте).
 _VISITOR_ROLE_WORDS = {"посетитель", "посетителя", "посетителем", "гость", "гостем"}
 _EXHIBITOR_ROLE_WORDS = {
     "экспонент", "экспонента", "экспонентом", "участник", "участника", "участником",
 }
+# "я X" / "как X" — типичная формула самоопределения роли независимо от
+# длины остального сообщения ("Хочу приехать как посетитель", "Я — экспонент").
+_VISITOR_ROLE_PATTERN = re.compile(r"\b(?:я|как)\s+(?:в\s+)?(посетител\w*|гост\w*)\b", re.IGNORECASE)
+_EXHIBITOR_ROLE_PATTERN = re.compile(r"\b(?:я|как)\s+(?:в\s+)?(экспонент\w*|участник\w*)\b", re.IGNORECASE)
 
 
 def _explicit_role_reply(message: str) -> str | None:
+    is_visitor_pattern = bool(_VISITOR_ROLE_PATTERN.search(message))
+    is_exhibitor_pattern = bool(_EXHIBITOR_ROLE_PATTERN.search(message))
+    if is_visitor_pattern and not is_exhibitor_pattern:
+        return "visitor"
+    if is_exhibitor_pattern and not is_visitor_pattern:
+        return "exhibitor"
+    if is_visitor_pattern and is_exhibitor_pattern:
+        return None  # упомянуты обе роли — не угадываем, пусть решает обычная логика
+
+    # Короткий "голый" ответ на уже заданный уточняющий вопрос ("посетитель",
+    # "экспонент") — без "я"/"как", но сам факт краткости делает его
+    # однозначным ответом, а не новым самостоятельным вопросом.
     words = message.lower().split()
     if len(words) > SHORT_REPLY_WORD_THRESHOLD:
         return None
@@ -368,7 +399,11 @@ def _score_all(message: str, history: list[dict] | None) -> tuple[list[float], b
     return combined, used_semantic
 
 
-def search(message: str, history: list[dict] | None = None) -> SearchResult:
+def search(
+    message: str,
+    history: list[dict] | None = None,
+    segment_hint: str | None = None,
+) -> SearchResult:
     scores, used_semantic = _score_all(message, history)
     high = EMB_HIGH if used_semantic else FUZZY_HIGH
     low = EMB_LOW if used_semantic else FUZZY_LOW
@@ -393,6 +428,19 @@ def search(message: str, history: list[dict] | None = None) -> SearchResult:
     common_top = top_score("common")
     visitor_top = top_score("visitor")
     exhibitor_top = top_score("exhibitor")
+
+    # "Липкий" сегмент: если фронтенд передал segment_hint (роль, уже
+    # установленная в этом диалоге — см. main.py/widget.js), слегка
+    # подталкиваем скор этой роли, чтобы короткие follow-up-вопросы не
+    # "перескакивали" в другую роль просто из-за случайного совпадения
+    # слова с чужим разделом базы (например "бейдж" — и у посетителей
+    # неявно через билет, и явно в пропусках экспонента). Это не жёсткая
+    # блокировка: явный сигнал другой роли (см. explicit_role ниже) или
+    # заметно более высокий скор другой роли всё равно победит.
+    if segment_hint == "visitor":
+        visitor_top = min(1.0, visitor_top + SEGMENT_HINT_BONUS)
+    elif segment_hint == "exhibitor":
+        exhibitor_top = min(1.0, exhibitor_top + SEGMENT_HINT_BONUS)
 
     # Порядок проверок важен. Сначала смотрим, не является ли роль
     # неоднозначной (visitor vs exhibitor почти одинаковый скор) — раздел
@@ -437,30 +485,33 @@ def search(message: str, history: list[dict] | None = None) -> SearchResult:
     else:
         confidence = "LOW"
 
-    # Дополнительный признак неоднозначности темы (не только роли): топ-1 и
-    # топ-2 кандидата из РАЗНЫХ КАТЕГОРИЙ близки друг к другу по скору —
-    # снижаем уверенность до MEDIUM, даже если сам скор высокий. Сравниваем
-    # именно категорию, а не intent: два разных intent-а из одной категории
-    # (например, "как заказать электричество на стенде" и "как подключить
-    # стенд к электричеству на необорудованной площади" — оба из
-    # "Электропитание") — это не неоднозначность, а несколько релевантных
-    # фактов по одной теме, которые LLM и так объединит в ответе (раздел 8
-    # ТЗ, RAG). Порог относительный (доля от топ-1), а не абсолютный, чтобы
-    # работать и на высоких, и на средних скорах. NB: с fuzzy-fallback (без
-    # embeddings) этот эвристический сигнал слабее, чем с реальным semantic
-    # search — см. docstring модуля и раздел 11 ТЗ про калибровку порогов.
-    # Второй сигнал неоднозначности: даже в ОДНОЙ категории генерическое
-    # слово ("пропуск") может дать МНОГО (3+) равно правдоподобных, но
-    # взаимоисключающих кандидатов (бейдж / монтажный пропуск / пропуск
-    # ПРР — раздел 10 ТЗ, обязательный пример уточнения) — это не "несколько
-    # дополняющих друг друга фактов", а реальный выбор между вариантами.
-    # Отличается от электропитания тем, что там кандидатов с высоким
-    # скором всего два, а тут — сразу пять-шесть.
+    # Дополнительный признак неоднозначности темы (не только роли), два
+    # сигнала, оба на пороге NEAR_TOP_COUNT_RATIO (специально строгий —
+    # короткие common-факты все содержат слова "выставка"/"AGRAVIA", так
+    # что у топ-1=1.0 почти всегда найдётся что-то на 0.75-0.9 просто от
+    # общей темы, а не от реальной неоднозначности; более мягкий порог
+    # здесь ложно снижал уверенность, например, для "Где выставка?" —
+    # общий вопрос про дату оказывался "почти таким же" кандидатом):
+    #   1. Топ-1 и топ-2 из РАЗНЫХ КАТЕГОРИЙ и близки друг к другу —
+    #      сравниваем именно категорию, а не intent: два intent-а из ОДНОЙ
+    #      категории (например, два вопроса про "Электропитание") — это не
+    #      неоднозначность, а несколько дополняющих фактов, которые LLM и
+    #      так объединит в ответе (раздел 8 ТЗ, RAG).
+    #   2. МНОГО (3+) кандидатов около топа даже в одной категории —
+    #      генерическое слово ("пропуск") может дать целый список равно
+    #      правдоподобных, но взаимоисключающих вариантов (бейдж /
+    #      монтажный пропуск / пропуск ПРР — раздел 10 ТЗ, обязательный
+    #      пример уточнения).
+    # NB: с fuzzy-fallback (без embeddings) оба сигнала слабее, чем с
+    # реальным semantic search — см. docstring модуля и раздел 11 ТЗ про
+    # калибровку порогов.
     if confidence == "HIGH" and len(candidates) >= 2:
         top1, top2 = candidates[0], candidates[1]
-        near_top_count = sum(1 for c in candidates if top1.score > 0 and c.score / top1.score >= 0.75)
+        near_top_count = sum(
+            1 for c in candidates if top1.score > 0 and c.score / top1.score >= NEAR_TOP_COUNT_RATIO
+        )
         if top1.score > 0 and (
-            (top1.category != top2.category and (top2.score / top1.score) >= 0.75)
+            (top1.category != top2.category and (top2.score / top1.score) >= NEAR_TOP_COUNT_RATIO)
             or near_top_count >= 3
         ):
             confidence = "MEDIUM"
