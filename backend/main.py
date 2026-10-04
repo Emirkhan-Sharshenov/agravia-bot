@@ -31,16 +31,13 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     session_id: str | None = None
-    # Раздел 2.1 ТЗ: выбор роли по-прежнему НЕ обязателен перед началом
-    # диалога — сегмент определяется автоматически. Но роль, однажды
-    # определённая в рамках диалога, должна "прилипать" (фидбэк 2026-09-14:
-    # короткие follow-up-вопросы не должны заново переопределять роль с
-    # нуля) — фронтенд присылает сюда последний segment из ответа, а
-    # retrieval.search() лишь слегка подталкивает эту роль, не блокируя
-    # переключение при явном сигнале другой роли.
-    segment_hint: str | None = None
     message: str
     history: list[dict] = []  # [{"role": "user"/"assistant", "content": "..."}]
+    # Состояние диалога (роль, прошлая тема, ожидаемое уточнение). Сервер ничего
+    # не хранит: клиент присылает назад то, что получил в прошлом ответе.
+    state: dict | None = None
+    # Совместимость со старыми версиями виджета, присылавшими только роль.
+    segment_hint: str | None = None
 
 
 class ChatResponse(BaseModel):
@@ -50,6 +47,9 @@ class ChatResponse(BaseModel):
     confidence: str
     clarify: bool = False
     offer_manager: bool = False
+    intent: str | None = None
+    role: str | None = None
+    state: dict = {}
 
 
 class HandoffRequest(BaseModel):
@@ -79,17 +79,25 @@ def health():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest):
+def chat(req: ChatRequest):
+    # Обычная (не async) функция: внутри блокирующие HTTP-вызовы к LLM,
+    # FastAPI выполнит её в пуле потоков, не блокируя event loop.
     session_id = req.session_id or str(uuid.uuid4())
 
-    result = chat_engine.handle_message(
-        session_id, req.message, history=req.history, segment_hint=req.segment_hint
-    )
+    try:
+        result = chat_engine.handle_message(
+            session_id, req.message, history=req.history,
+            state=req.state, segment_hint=req.segment_hint,
+        )
+    except Exception as exc:  # LLM-провайдер недоступен и т.п. — не отдаём 500 в виджет
+        _log_dialog(session_id=session_id, message=req.message, error=repr(exc))
+        result = chat_engine.error_result(req.state)
 
     _log_dialog(
         session_id=session_id,
         segment=result.segment,
         intent=result.intent,
+        role=result.role,
         confidence=result.confidence,
         message=req.message,
         reply=result.reply,
@@ -104,7 +112,10 @@ async def chat(req: ChatRequest):
         segment=result.segment,
         confidence=result.confidence,
         clarify=result.clarified,
-        offer_manager=result.fallback,
+        offer_manager=result.offer_manager,
+        intent=result.intent,
+        role=result.role,
+        state=result.state,
     )
 
 

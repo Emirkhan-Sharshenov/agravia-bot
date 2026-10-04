@@ -61,6 +61,7 @@ def _new_state() -> dict:
     return {
         "stage": "chat",  # chat -> handoff_consent -> handoff_name -> handoff_contact -> chat
         "segment": "uncertain",
+        "conv_state": None,  # состояние диалога chat_engine (роль, тема, уточнение)
         "history": [],
         "pending_question": None,
         "handoff_name": None,
@@ -144,12 +145,16 @@ async def alice_webhook(request: Request):
 
     # --- этап: обычный чат по базе знаний (сегмент определяется автоматически) ---
     if state["stage"] == "chat":
-        result = chat_engine.handle_message(
-            session_id, command, history=state["history"], segment_hint=state["segment"]
-        )
+        try:
+            result = chat_engine.handle_message(
+                session_id, command, history=state["history"], state=state["conv_state"]
+            )
+        except Exception:  # LLM недоступна — не роняем навык
+            result = chat_engine.error_result(state["conv_state"])
         state["segment"] = result.segment
+        state["conv_state"] = result.state
 
-        if result.fallback:
+        if result.offer_manager:
             state["stage"] = "handoff_consent"
             state["pending_question"] = command
             return _reply(
@@ -163,7 +168,8 @@ async def alice_webhook(request: Request):
         state["history"] = state["history"][-MAX_HISTORY_TURNS:]
 
         buttons = None
-        if result.clarified and result.segment == "uncertain":
+        pending = (result.state or {}).get("pending")
+        if pending and pending.get("kind") == "role":
             buttons = [
                 {"title": "Я посетитель", "hide": True},
                 {"title": "Я экспонент", "hide": True},

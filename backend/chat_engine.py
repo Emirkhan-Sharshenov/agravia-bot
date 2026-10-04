@@ -1,109 +1,160 @@
 """
-Единая логика диалога (раздел 3 ТЗ AI-бот AGRAVIA 2027):
+Единая логика диалога (ТЗ v2, раздел 2):
 
-  сообщение → сегментация (без обязательного выбора роли) → учёт истории →
-  семантический поиск → confidence → ответ / уточнение / fallback
+  запрос -> тема и роль (router.py, LLM, с учётом состояния диалога) ->
+  при необходимости ОДНО уточнение -> факты базы по теме и роли -> короткий
+  ответ без Markdown -> только если по теме в базе ничего нет, честное
+  "данных нет" и предложение менеджера.
 
-Используется и вебхуком сайта (main.py: /api/chat), и навыком Алисы
-(alice.py), чтобы поведение не расходилось между каналами.
+Состояние диалога явное и хранится на клиенте (виджет присылает его обратно
+каждым запросом, Алиса держит у себя в сессии):
+    {"role": visitor|exhibitor|prospect|builder|None,
+     "intent": тема прошлого хода,
+     "pending": None | {"kind": "role"|"topic", "intent": тема, по которой спросили}}
+Роль, однажды определённая, сохраняется, пока пользователь не назовёт другую
+(в том числе исправлением "нет, я про билет"); повторно то же уточнение не
+задаётся — после одного вопроса бот отвечает или честно говорит, что данных нет.
 
-Итерация "состояние и маршрутизация" (2026-09-14, фидбэк Егора):
-  - segment_hint — роль, уже установленная в этом диалоге (фронтенд
-    присылает её обратно, main.py/alice.py прокидывают сюда), чтобы
-    короткие follow-up-вопросы не переопределяли роль с нуля.
-  - Запрет повторного уточнения подряд: если предыдущий ход бота уже был
-    уточняющим вопросом (retrieval.last_bot_turn_is_clarifying), система
-    обязана в этот раз либо ответить, либо признать, что данных нет —
-    не задавать второй уточняющий вопрос подряд.
-  - Коммерческий intent "хочу стать экспонентом" маршрутизируется
-    отдельно от обычного RAG по базе (см. _BECOME_EXHIBITOR_*), чтобы не
-    попадать в несвязанные конкретные FAQ (конкурс продукции, пропуска и
-    т.п.) только по совпадению слова "участие".
+Используется и вебхуком сайта (main.py), и навыком Алисы (alice.py).
 """
 from __future__ import annotations
 
-import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import analytics
+import kb_store
 import llm
 import retrieval
+import router
+from text_format import clean_markdown
 
-NO_MATCH_REPLY = (
-    "К сожалению, у меня нет подтверждённой информации по этому вопросу.\n"
-    "Хотите, я передам его менеджеру? Он свяжется с вами."
+NO_DATA_REPLY = (
+    "В моих данных нет подтверждённой информации по этому вопросу. "
+    "Могу передать его менеджеру — он свяжется с вами."
 )
-
-ROLE_CLARIFY_REPLY = (
-    "Уточните, пожалуйста: вы посетитель выставки или экспонент (участник)?"
+ERROR_REPLY = (
+    "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — "
+    "менеджер свяжется с вами."
 )
-
-# Раздел 10 ТЗ ожидает КОРОТКИЙ уточняющий вопрос, но если LLM вдруг вернёт
-# пустую строку (например, reasoning-модель израсходовала весь бюджет
-# токенов на скрытые рассуждения, не оставив ничего на сам ответ) — лучше
-# показать общий вопрос, чем пустое сообщение в чате.
-GENERIC_CLARIFY_REPLY = (
-    "Уточните, пожалуйста, ваш вопрос — так я смогу подобрать точный ответ."
+GREETING_REPLY = (
+    "Здравствуйте! Я помощник AGRAVIA. Помогу с посещением выставки, участием, "
+    "монтажом и логистикой, деловой программой. Что вас интересует?"
 )
-
-# --- Коммерческий intent "стать экспонентом" ------------------------------
-# Не КБ-факт, а маршрутизация: фразы явно о намерении САМОГО пользователя
-# стать участником выставки. Не путать с нейтральными вопросами вроде
-# "условия участия?" без такой рамки — для них по-прежнему работает
-# обычная (в т.ч. ролевая) логика ниже, раз это неоднозначно само по себе.
-_BECOME_EXHIBITOR_TRIGGERS = [
-    "хочу стать участником", "хочу стать экспонентом", "хочу принять участие",
-    "как принять участие", "хочу стенд", "хочу выставиться", "хочу участвовать",
-    "стать экспонентом", "стать участником выставки", "участвовать в выставке",
-    "сколько стоит участие", "стоимость участия",
-]
-_BECOME_EXHIBITOR_PATTERN = re.compile(
-    "|".join(re.escape(p) for p in _BECOME_EXHIBITOR_TRIGGERS), re.IGNORECASE
+OFFTOPIC_REPLY = (
+    "Это вне моей темы — я помогаю по вопросам выставки AGRAVIA 2027: даты и место, "
+    "билеты и регистрация, участие и стенды, монтаж и заезд, деловая программа. "
+    "С чем помочь?"
 )
-
-BECOME_EXHIBITOR_PITCH = (
-    "Да, вы можете принять участие в AGRAVIA 2027 со стендом. Расскажу об основных "
-    "форматах и передам заявку менеджеру для точного расчёта.\n"
-    "Подскажите, пожалуйста: вас интересует готовый стенд (оборудованная площадь) "
-    "или необорудованная площадь под индивидуальную застройку?"
+HELP_REPLY = (
+    "Подскажите, что вам нужно: прийти на выставку как посетитель, участвовать как "
+    "экспонент, монтаж и заезд или деловая программа?"
 )
-# Используется и как ответ, и как маркер "мы в этом сценарии" для
-# следующего хода (см. _in_become_exhibitor_flow) — фраза должна быть
-# достаточно специфичной, чтобы не совпасть случайно с чем-то другим.
-_BECOME_EXHIBITOR_FLOW_MARKER = "необорудованная площадь под индивидуальную застройку"
-
-BECOME_EXHIBITOR_FOLLOWUP = (
-    "Понял, спасибо! Чтобы посчитать точные условия и стоимость участия, "
-    "давайте я передам заявку менеджеру — он свяжется с вами и уточнит детали."
+GIBBERISH_REPLY = (
+    "Не поняла запрос. Попробуйте переформулировать — например, про даты, билеты, "
+    "участие или монтаж."
 )
-
-
-def _is_become_exhibitor_trigger(message: str) -> bool:
-    return bool(_BECOME_EXHIBITOR_PATTERN.search(message))
-
-
-def _in_become_exhibitor_flow(history: list[dict] | None) -> bool:
-    for turn in reversed(history or []):
-        if turn.get("role") == "assistant":
-            return _BECOME_EXHIBITOR_FLOW_MARKER in turn.get("content", "")
-    return False
-
-
-# "Условия участия?" сам по себе, без рамки "я хочу..."/"как экспоненту"
-# (это уже покрыто become_exhibitor выше) — реально двусмысленная фраза:
-# может спрашивать и посетитель (условия посещения), и потенциальный
-# экспонент. Обычная content-логика её не ловит как ролевую неоднозначность
-# (visitor почти не имеет совпадений, exhibitor — слабо, но не "близко" к
-# visitor, поэтому эвристика относительной близости молчит). Узкий паттерн
-# только на "голую" фразу, чтобы не задевать другие вопросы.
-_GENERIC_PARTICIPATION_PATTERN = re.compile(
-    r"^\s*услови[а-яё]*\s+участи[а-яё]*\s*\??\s*$|^\s*участи[а-яё]*\s*\??\s*$",
-    re.IGNORECASE,
+TOPIC_CLARIFY_REPLY = (
+    "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении "
+    "выставки, об участии в ней, о монтаже и заезде или о деловой программе?"
 )
+ROLE_QUESTIONS = {
+    "pass": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
+    "badge": "Уточните, пожалуйста: бейдж нужен посетителю или экспоненту?",
+    "entry": "Уточните, пожалуйста: вы спрашиваете про заезд экспонентов, монтажной команды или завоз оборудования?",
+    "vehicle_access": "Уточните, пожалуйста: вы приезжаете как посетитель (парковка) или везёте оборудование на стенд?",
+}
+ROLE_ACK = {
+    "visitor": "Хорошо, вы посетитель. Могу помочь с билетом и регистрацией, как добраться, деловой программой.",
+    "exhibitor": "Хорошо, вы экспонент. Могу помочь с монтажом и заездом, пропусками, ввозом оборудования, личным кабинетом.",
+    "prospect": "Хорошо, вы хотите принять участие. Могу рассказать, как это оформить, и передать заявку менеджеру.",
+    "builder": "Хорошо, вы застройщик. Могу помочь с монтажом, допуском на площадку и пропусками.",
+}
+OFFER_MANAGER_SUFFIX = {
+    "participation": "Хотите, передам вашу заявку менеджеру?",
+    "contact": "Могу также передать ваш вопрос менеджеру — он свяжется с вами.",
+}
+
+# Подсказки для ответной модели по теме — общие требования к содержанию,
+# не привязанные к конкретным формулировкам вопросов.
+INTENT_HINTS = {
+    "participation": (
+        "Пользователь хочет стать участником. Дай подтверждённый путь: связаться с "
+        "организатором (контакты есть в данных). Цен, условий оплаты и формы заявки в "
+        "данных может не быть — тогда прямо скажи, что их в данных нет, и не называй сумм. "
+        "Не рассказывай про пропуска, страхование и конкурсы."
+    ),
+    "visitor_registration": "Это сценарий посетителя: дай инструкцию по билету/регистрации и сайт из данных.",
+    "dates": "Дай даты проведения (и часы работы, если спрошено).",
+    "contact": "Дай подтверждённые контакты организатора из данных.",
+    "business_program": (
+        "Не придумывай расписание и время мероприятий: если расписания по дням в данных "
+        "нет — скажи об этом и дай то, что есть."
+    ),
+    "cabinet": "Ссылку на кабинет не придумывай: если её нет в данных — скажи об этом и дай то, что есть.",
+    "montage": "Даты и порядок — только из данных; если нужной даты или режима нет, скажи об этом.",
+    "demontage": "Даты и порядок — только из данных; если нужной даты или режима нет, скажи об этом.",
+    "equipment_in": "Порядок и документы — только из данных; не выдумывай недостающее.",
+    "equipment_out": "Порядок и сроки — только из данных; не выдумывай недостающее.",
+}
+
+_DIRECT_TOPICS = {
+    "dates": ["dates"],
+    "location": ["location"],
+    "visitor_registration": ["visitor_reg"],
+    "participation": ["participation"],
+    "montage": ["montage"],
+    "demontage": ["demontage"],
+    "equipment_in": ["equipment_in"],
+    "equipment_out": ["equipment_out"],
+    "business_program": ["program"],
+    "cabinet": ["cabinet"],
+    "contact": ["contact"],
+    "general": ["general"],
+}
+
+MAX_CANDIDATES = 8
+MAX_HISTORY = 8
 
 
-def _is_generic_participation_phrase(message: str) -> bool:
-    return bool(_GENERIC_PARTICIPATION_PATTERN.match(message))
+def topics_for(intent: str, role: str | None) -> list[str]:
+    """Какие темы базы (поле topics в kb.json) отвечают за интент при данной роли."""
+    if intent in ("pass", "badge"):
+        by_role = {
+            "visitor": ["visitor_reg"],
+            "exhibitor": ["pass_exhibitor"],
+            "builder": ["pass_builder"],
+            "prospect": ["participation"],
+        }
+        return by_role.get(role or "", ["visitor_reg", "pass_exhibitor", "pass_builder"])
+    if intent == "entry":
+        if role == "visitor":
+            return ["visitor_reg"]
+        if role == "prospect":
+            return ["participation"]
+        return ["entry"]
+    if intent == "vehicle_access":
+        if role == "visitor":
+            return ["visitor_car"]
+        if role in ("exhibitor", "builder", "prospect"):
+            return ["vehicle"]
+        return ["vehicle", "visitor_car"]
+    return _DIRECT_TOPICS.get(intent, [])
+
+
+def segments_for_role(role: str | None) -> set[str] | None:
+    if role == "visitor":
+        return {"visitor", "common"}
+    if role in ("exhibitor", "builder", "prospect"):
+        return {"exhibitor", "common"}
+    return None  # роль неизвестна — ищем по всей базе
+
+
+def _legacy_segment(role: str | None, pending: bool) -> str:
+    if role == "visitor":
+        return "visitor"
+    if role in ("exhibitor", "builder", "prospect"):
+        return "exhibitor"
+    return "uncertain" if pending else "common"
 
 
 @dataclass
@@ -111,35 +162,43 @@ class EngineResult:
     reply: str
     segment: str
     intent: str | None
-    confidence: str
+    role: str | None
+    confidence: str  # HIGH — ответили, MEDIUM — уточнили, LOW — данных нет
     matched: bool
     clarified: bool
     fallback: bool
+    offer_manager: bool
+    state: dict = field(default_factory=dict)
 
 
-def _answer_or_fallback(
-    segment: str, message: str, candidates, history: list[dict], top_intent: str | None
-) -> EngineResult:
-    """HIGH-тир: спросить LLM ответ по текущим кандидатам, иначе fallback."""
-    answer = llm.answer(segment, message, candidates, history=history)
-    if answer is None:
-        return EngineResult(
-            reply=NO_MATCH_REPLY,
-            segment=segment,
-            intent=top_intent,
-            confidence="LOW",
-            matched=False,
-            clarified=False,
-            fallback=True,
-        )
+def normalize_state(state: dict | None, segment_hint: str | None = None) -> dict:
+    """Приводит присланное клиентом состояние к безопасному виду. Старые
+    клиенты присылали только segment_hint — из него берём роль."""
+    state = state if isinstance(state, dict) else {}
+    role = state.get("role")
+    if role not in router.ROLES:
+        role = segment_hint if segment_hint in ("visitor", "exhibitor") else None
+    pending = state.get("pending")
+    if not (isinstance(pending, dict) and pending.get("kind") in ("role", "topic")):
+        pending = None
+    intent = state.get("intent") if state.get("intent") in router.INTENT_DESCRIPTIONS else None
+    return {"role": role, "intent": intent, "pending": pending}
+
+
+def _result(reply, intent, role, confidence, *, state, matched=False, clarified=False,
+            fallback=False, offer_manager=False) -> EngineResult:
+    pending = state.get("pending")
     return EngineResult(
-        reply=answer,
-        segment=segment,
-        intent=top_intent,
-        confidence="HIGH",
-        matched=True,
-        clarified=False,
-        fallback=False,
+        reply=reply,
+        segment=_legacy_segment(role, pending is not None),
+        intent=intent,
+        role=role,
+        confidence=confidence,
+        matched=matched,
+        clarified=clarified,
+        fallback=fallback,
+        offer_manager=offer_manager,
+        state=state,
     )
 
 
@@ -147,106 +206,99 @@ def handle_message(
     session_id: str,
     message: str,
     history: list[dict] | None = None,
+    state: dict | None = None,
     segment_hint: str | None = None,
 ) -> EngineResult:
-    history = history or []
+    history = (history or [])[-MAX_HISTORY:]
+    state = normalize_state(state, segment_hint)
 
-    # --- Коммерческий сценарий "стать экспонентом" — до обычного поиска ---
-    if _in_become_exhibitor_flow(history):
-        out = EngineResult(
-            reply=BECOME_EXHIBITOR_FOLLOWUP,
-            segment="exhibitor",
-            intent="commercial.become_exhibitor",
-            confidence="HIGH",
-            matched=True,
-            clarified=False,
-            fallback=True,  # предлагаем менеджера — лид уже квалифицирован
-        )
-        _log(session_id, out, message)
-        return out
+    try:
+        route = router.classify(message, history, state)
+        intent, role = route.intent, route.role or state["role"]
+    except Exception:
+        # Классификатор недоступен/ответил нечитаемо — не падаем: ведём как
+        # обычный вопрос по базе с ранее известной ролью.
+        intent, role = "other", state["role"]
 
-    if _is_become_exhibitor_trigger(message):
-        out = EngineResult(
-            reply=BECOME_EXHIBITOR_PITCH,
-            segment="exhibitor",
-            intent="commercial.become_exhibitor",
-            confidence="HIGH",
-            matched=True,
-            clarified=True,
-            fallback=False,
-        )
-        _log(session_id, out, message)
-        return out
+    pending = state["pending"]
+    # Ответ на наш уточняющий вопрос ("Я экспонент") — это ответ по ТОЙ же
+    # теме, о которой спрашивали, а не новая тема role_only.
+    if pending and intent == "role_only":
+        intent = pending["intent"]
 
-    # "Условия участия?" сам по себе — ролево неоднозначная фраза (см.
-    # docstring _is_generic_participation_phrase), но только если роль ещё
-    # не установлена и мы ещё ничего не уточняли в этом диалоге — иначе
-    # это нарушило бы правило "не переспрашивать дважды подряд".
-    already_clarified = retrieval.last_bot_turn_is_clarifying(history)
-    if (
-        segment_hint not in ("visitor", "exhibitor")
-        and not already_clarified
-        and _is_generic_participation_phrase(message)
-    ):
-        out = EngineResult(
-            reply=ROLE_CLARIFY_REPLY,
-            segment="uncertain",
-            intent=None,
-            confidence="MEDIUM",
-            matched=False,
-            clarified=True,
-            fallback=False,
-        )
-        _log(session_id, out, message)
-        return out
-
-    # --- Обычный маршрут: сегментация → confidence → ответ/уточнение ---
-    result = retrieval.search(message, history, segment_hint=segment_hint)
-    top_intent = result.candidates[0].intent if result.candidates else None
-
-    if result.ambiguous_role and not already_clarified:
-        out = EngineResult(
-            reply=ROLE_CLARIFY_REPLY,
-            segment="uncertain",
-            intent=None,
-            confidence=result.confidence,
-            matched=False,
-            clarified=True,
-            fallback=False,
-        )
-    elif result.confidence == "LOW":
-        out = EngineResult(
-            reply=NO_MATCH_REPLY,
-            segment=result.segment,
-            intent=top_intent,
-            confidence=result.confidence,
-            matched=False,
-            clarified=False,
-            fallback=True,
-        )
-    elif result.confidence == "MEDIUM" and not already_clarified:
-        clarifying_question = llm.clarify(result.candidates).strip() or GENERIC_CLARIFY_REPLY
-        out = EngineResult(
-            reply=clarifying_question,
-            segment=result.segment,
-            intent=top_intent,
-            confidence=result.confidence,
-            matched=False,
-            clarified=True,
-            fallback=False,
-        )
-    else:
-        # Либо обычный HIGH-путь, либо (ambiguous_role/MEDIUM +
-        # already_clarified=True): раздел 4.4/10 ТЗ — после ОДНОГО
-        # уточнения система обязана либо ответить, либо признать, что
-        # данных нет, а не спрашивать снова. Роль к этому моменту уже
-        # разрешена (explicit_role reply в retrieval.py, если пользователь
-        # ответил "посетитель"/"экспонент") либо остаётся неопределённой —
-        # в обоих случаях отвечаем по лучшим текущим кандидатам.
-        out = _answer_or_fallback(result.segment, message, result.candidates, history, top_intent)
-
+    out = _route(session_id, message, history, state, intent, role)
     _log(session_id, out, message)
     return out
+
+
+def _route(session_id, message, history, state, intent, role) -> EngineResult:
+    pending = state["pending"]
+    new_state = {"role": role, "intent": intent, "pending": None}
+
+    # --- Не по базе: приветствие, помощь, вне темы, мусор, только роль ------
+    if intent == "greeting":
+        return _result(GREETING_REPLY, intent, role, "HIGH", state=new_state, matched=True)
+    if intent == "gibberish":
+        return _result(GIBBERISH_REPLY, intent, role, "MEDIUM", state=new_state)
+    if intent == "offtopic":
+        # Не отправляем к менеджеру автоматически (ТЗ 3.7) — возвращаем к теме.
+        return _result(OFFTOPIC_REPLY, intent, role, "HIGH", state=new_state, matched=True)
+    if intent == "help" or (intent == "role_only" and role is None):
+        return _result(HELP_REPLY, intent, role, "MEDIUM", state=new_state, clarified=True)
+    if intent == "role_only":
+        return _result(ROLE_ACK[role], intent, role, "HIGH", state=new_state, matched=True)
+
+    # --- Роль определяет ответ, а она неизвестна: одно уточнение ------------
+    if intent in router.ROLE_DEPENDENT and role is None and not pending:
+        new_state["pending"] = {"kind": "role", "intent": intent}
+        return _result(
+            ROLE_QUESTIONS[intent], intent, role, "MEDIUM", state=new_state, clarified=True
+        )
+
+    # --- Факты базы -----------------------------------------------------------
+    if intent == "other":
+        segments = segments_for_role(role)
+        candidates, low = retrieval.rank(message, history, segments=segments)
+        if not candidates or candidates[0].score < low:
+            if pending:  # уже уточняли — честно говорим, что данных нет
+                return _no_data(intent, role, new_state)
+            new_state["pending"] = {"kind": "topic", "intent": intent}
+            return _result(
+                TOPIC_CLARIFY_REPLY, intent, role, "MEDIUM", state=new_state, clarified=True
+            )
+    else:
+        topics = topics_for(intent, role)
+        items = kb_store.items_for_topics(topics)
+        if not items:
+            return _no_data(intent, role, new_state)
+        candidates, _ = retrieval.rank(message, history, items=items)
+
+    candidates = candidates[:MAX_CANDIDATES]
+    answer = llm.answer(role, message, candidates, history, INTENT_HINTS.get(intent, ""))
+    if answer is None:
+        return _no_data(intent, role, new_state)
+
+    reply = clean_markdown(answer)
+    suffix = OFFER_MANAGER_SUFFIX.get(intent)
+    if suffix:
+        reply = f"{reply}\n\n{suffix}"
+    return _result(
+        reply, intent, role, "HIGH", state=new_state, matched=True, offer_manager=bool(suffix)
+    )
+
+
+def _no_data(intent, role, state) -> EngineResult:
+    return _result(
+        NO_DATA_REPLY, intent, role, "LOW", state=state, fallback=True, offer_manager=True
+    )
+
+
+def error_result(state: dict | None) -> EngineResult:
+    """Ответ на случай, когда LLM-провайдер недоступен (вызывает main.py)."""
+    state = normalize_state(state)
+    return _result(
+        ERROR_REPLY, "error", state["role"], "LOW", state=state, fallback=True, offer_manager=True
+    )
 
 
 def _log(session_id: str, out: EngineResult, message: str) -> None:

@@ -13,6 +13,7 @@
   var state = {
     sessionId: null,
     segment: null,        // определяется бэкендом автоматически (common/visitor/exhibitor/uncertain)
+    convState: null,      // состояние диалога (роль, тема, уточнение): приходит от бэкенда и отправляется обратно
     history: [],          // [{role, content}]
     open: false,
   };
@@ -234,7 +235,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         session_id: state.sessionId,
-        segment_hint: state.segment, // "прилипшая" роль текущего диалога (visitor/exhibitor), если уже определена
+        state: state.convState, // роль/тема/уточнение — бэкенд ничего не хранит, состояние носит клиент
         message: text,
         history: state.history.slice(0, -1), // без последнего user-сообщения, оно уже в message
       }),
@@ -243,6 +244,7 @@
       .then(function (data) {
         state.sessionId = data.session_id;
         state.segment = data.segment;
+        state.convState = data.state || null;
         setTyping(false);
         sendBtn.disabled = false;
         addMessage(data.reply, "bot");
