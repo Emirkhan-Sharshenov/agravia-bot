@@ -112,7 +112,7 @@ _DIRECT_TOPICS = {
     "general": ["general"],
 }
 
-MAX_CANDIDATES = 8
+MAX_CANDIDATES = 6
 MAX_HISTORY = 8
 
 

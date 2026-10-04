@@ -23,6 +23,7 @@
 промпт + сообщения -> текст"; поверх него answer() и router.py.
 """
 import os
+import re
 import time
 import uuid
 
@@ -203,6 +204,24 @@ GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 _groq_reasoning_effort_supported = True
 
 
+RATE_LIMIT_MAX_WAIT = float(os.environ.get("RATE_LIMIT_MAX_WAIT", "9"))
+
+
+def _retry_delay(resp: httpx.Response) -> float | None:
+    """Сколько секунд ждать до повтора после 429 (из заголовка или текста ошибки)."""
+    header = resp.headers.get("retry-after")
+    if header:
+        try:
+            return float(header) + 0.3
+        except ValueError:
+            pass
+    match = re.search(r"try again in ([\d.]+)\s*(ms|s)\b", resp.text)
+    if not match:
+        return None
+    value = float(match.group(1))
+    return (value / 1000 if match.group(2) == "ms" else value) + 0.3
+
+
 def _groq_chat(system: str, messages: list[dict], max_tokens: int, temperature: float) -> str:
     global _groq_reasoning_effort_supported
     api_key = os.environ.get("GROQ_API_KEY", "")
@@ -236,6 +255,18 @@ def _groq_chat(system: str, messages: list[dict], max_tokens: int, temperature: 
     if resp.status_code == 400 and _groq_reasoning_effort_supported and "reasoning" in resp.text.lower():
         _groq_reasoning_effort_supported = False
         resp = _post(False)
+    # Лимит токенов в минуту (на бесплатном тарифе Groq он невелик): в тексте
+    # ошибки есть "try again in X s" — если ждать недолго, ждём и повторяем,
+    # а не отдаём пользователю ошибку. Общий бюджет ожидания ограничен, чтобы
+    # уложиться в таймаут serverless-функции.
+    waited = 0.0
+    while resp.status_code == 429 and waited < RATE_LIMIT_MAX_WAIT:
+        delay = _retry_delay(resp)
+        if delay is None or waited + delay > RATE_LIMIT_MAX_WAIT:
+            break
+        time.sleep(delay)
+        waited += delay
+        resp = _post(_groq_reasoning_effort_supported)
     if resp.status_code >= 400:
         # raise_for_status() теряет тело ответа, а причина (например
         # model_not_found) лежит именно в нём.
@@ -291,7 +322,7 @@ def answer(
     messages = list(history or []) + [{"role": "user", "content": user_message}]
     # Запас токенов под скрытые рассуждения reasoning-модели (иначе content
     # приходит пустым — всё ушло на reasoning).
-    text = complete(system, messages, max_tokens=1200, temperature=0.2)
+    text = complete(system, messages, max_tokens=700, temperature=0.2)
     if not text or NO_MATCH_MARKER in text:
         return None
     return text

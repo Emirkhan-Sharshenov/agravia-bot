@@ -10,16 +10,35 @@
 которых не должно быть выдумано). Итоговую оценку OK / Частично / Ошибка
 ставит человек по ответам (см. results.json).
 
-Запуск:  python qa/run_qa.py [BASE_URL]
+Запуск:
+    python qa/run_qa.py [--base URL] [--pause СЕК] [--only 1,5,40-45]
+
+--pause нужен на бесплатном тарифе Groq (8000 токенов/мин на модель): между
+репликами делается пауза, чтобы не упираться в rate limit. Результаты
+дописываются в results.json по номерам кейсов, поэтому можно перепрогонять
+только часть набора (--only).
 """
+import argparse
 import json
-import sys
 import time
 from pathlib import Path
 
 import httpx
 
-BASE = (sys.argv[1] if len(sys.argv) > 1 else "https://backend-fawn-nine-72.vercel.app").rstrip("/")
+ap = argparse.ArgumentParser()
+ap.add_argument("--base", default="https://backend-fawn-nine-72.vercel.app")
+ap.add_argument("--pause", type=float, default=0.0)
+ap.add_argument("--only", default="")
+ARGS = ap.parse_args()
+BASE = ARGS.base.rstrip("/")
+
+
+def parse_only(spec: str) -> set[int]:
+    out: set[int] = set()
+    for part in filter(None, spec.split(",")):
+        lo, _, hi = part.partition("-")
+        out.update(range(int(lo), int(hi or lo) + 1))
+    return out
 
 ANSWER, CLARIFY, ANY = "answer", "clarify", "any"
 REG = {"visitor_registration"}
@@ -128,8 +147,9 @@ def run_case(client: httpx.Client, turns: list[str]) -> list[dict]:
         t0 = time.time()
         r = client.post(
             f"{BASE}/api/chat",
-            json={"session_id": session_id, "message": text, "history": history, "state": state},
-            timeout=60,
+            json={"session_id": session_id, "message": text, "history": history,
+                  "state": state, "debug": True},
+            timeout=90,
         )
         r.raise_for_status()
         data = r.json()
@@ -137,7 +157,10 @@ def run_case(client: httpx.Client, turns: list[str]) -> list[dict]:
             "user": text, "reply": data["reply"], "intent": data.get("intent"), "role": data.get("role"),
             "clarify": data["clarify"], "offer_manager": data["offer_manager"],
             "confidence": data["confidence"], "sec": round(time.time() - t0, 1),
+            "errors": data.get("debug") or [],
         })
+        if ARGS.pause:
+            time.sleep(ARGS.pause)
         session_id, state = data["session_id"], data.get("state")
         history += [{"role": "user", "content": text}, {"role": "assistant", "content": data["reply"]}]
     return out
@@ -170,10 +193,17 @@ def auto_check(case, steps) -> list[str]:
 
 
 def main():
+    out = Path(__file__).parent / "results.json"
+    previous = {r["n"]: r for r in json.loads(out.read_text(encoding="utf-8"))} if out.exists() else {}
+    only = parse_only(ARGS.only)
     results = []
     with httpx.Client() as client:
         for case in CASES:
             n, group, turns = case[0], case[1], case[2]
+            if only and n not in only:
+                if n in previous:
+                    results.append(previous[n])
+                continue
             try:
                 steps = run_case(client, turns)
                 issues = auto_check(case, steps)
@@ -185,7 +215,9 @@ def main():
             print(f"{flag}#{n:<3} {' → '.join(turns)[:60]:<60} | {last}")
             for i in issues:
                 print(f"      · {i}")
-    out = Path(__file__).parent / "results.json"
+            for step in steps:
+                for e in step.get("errors", []):
+                    print(f"      ! {e[:160]}")
     out.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
     bad = sum(1 for r in results if r["auto_issues"])
     print(f"\nавто-флаги: {bad} из {len(results)}; подробности — {out}")

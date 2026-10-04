@@ -104,10 +104,10 @@ def _describe_history(history: list[dict]) -> str:
     if not history:
         return "(пусто)"
     lines = []
-    for turn in history[-6:]:
+    for turn in history[-4:]:
         who = "пользователь" if turn.get("role") == "user" else "бот"
         text = (turn.get("content") or "").replace("\n", " ")
-        lines.append(f"{who}: {text[:220]}")
+        lines.append(f"{who}: {text[:160]}")
     return "\n".join(lines)
 
 
@@ -130,7 +130,7 @@ def classify(message: str, history: list[dict] | None, state: dict) -> Route:
         state=_describe_state(state),
         history=_describe_history(history or []),
     )
-    text = llm.complete(system, [{"role": "user", "content": message}], max_tokens=500, temperature=0.0)
+    text = llm.complete(system, [{"role": "user", "content": message}], max_tokens=260, temperature=0.0)
     data = _parse(text)
     if data is None:
         raise ValueError(f"router: нечитаемый ответ модели: {text[:200]!r}")
