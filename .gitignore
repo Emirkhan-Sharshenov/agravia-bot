@@ -15,3 +15,6 @@ backend/kb_embeddings_cache.json
 
 # OS/editor
 .DS_Store
+
+# Результаты прогона QA (генерируются backend/qa/run_qa.py)
+backend/qa/results.json
