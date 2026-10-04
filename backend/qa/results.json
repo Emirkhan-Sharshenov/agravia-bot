@@ -325,19 +325,17 @@
     "steps": [
       {
         "user": "Как посетить AGRAVIA?",
-        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "reply": "Вход бесплатный, но требуется онлайн-регистрация. На agravia.org в разделе «Получить билет» заполните анкету: 1) укажите e-mail, 2) перейдите по ссылке из письма, 3) заполните анкету, 4) сохраните электронный билет. На входе предъявите бейдж. При проблемах обращайтесь по e-mail agravia@expodat.com или по телефону +7 (499) 758-0-911 (пн–пт, 10:00–18:00 МСК).",
         "intent": "visitor_registration",
         "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 1.1,
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.7,
         "errors": []
       }
     ],
-    "auto_issues": [
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 17,
@@ -432,19 +430,17 @@
     "steps": [
       {
         "user": "Как мне попасть внутрь как гостю?",
-        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "reply": "Для входа как гость нужно пройти онлайн-регистрацию: зайдите на agravia.org, раздел «Получить билет», укажите e-mail, перейдите по ссылке из письма, заполните анкету и сохраните электронный билет. Вход на выставку осуществляется строго по бейджу. Могу рассказать подробнее.",
         "intent": "visitor_registration",
         "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
+        "offer_manager": false,
+        "confidence": "HIGH",
         "sec": 1.1,
         "errors": []
       }
     ],
-    "auto_issues": [
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 22,
@@ -455,19 +451,17 @@
     "steps": [
       {
         "user": "Есть ссылка на регистрацию?",
-        "reply": "Ссылка в данных отсутствует.",
+        "reply": "Ссылка на регистрацию: agravia.org (раздел «Получить билет»).",
         "intent": "visitor_registration",
         "role": null,
         "clarify": false,
         "offer_manager": false,
         "confidence": "HIGH",
-        "sec": 0.9,
+        "sec": 1.3,
         "errors": []
       }
     ],
-    "auto_issues": [
-      "нет ни одного из: ['agravia.org']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 23,
@@ -501,7 +495,7 @@
     "steps": [
       {
         "user": "Как стать участником?",
-        "reply": "1. Свяжитесь с организатором: ООО «Агрос Экспо Групп», Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com.\n2. Уточните условия участия и получите форму заявки.\n3. После заполнения и отправки заявки организатор уточнит дальнейшие шаги.\nЕсли нужна более подробная информация, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "reply": "Для участия свяжитесь с организатором: ООО «Агрос Экспо Групп», Тел.: +7 (495) 128 29 59, e-mail: agravia@agros-expo.com, сайт: agravia.org. Информации о стоимости, условиях оплаты, формах подачи заявки в данных нет.\n\nХотите, передам вашу заявку менеджеру?",
         "intent": "participation",
         "role": "prospect",
         "clarify": false,
@@ -627,19 +621,17 @@
     "steps": [
       {
         "user": "Как забронировать стенд?",
-        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "reply": "В данных нет информации о том, как забронировать стенд.\nДля уточнения можно связаться с организатором:\nТел.: +7 (495) 128 29 59, e-mail: agravia@agros-expo.com, сайт: agravia.org.\n\nХотите, передам вашу заявку менеджеру?",
         "intent": "participation",
         "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 1.0,
+        "confidence": "HIGH",
+        "sec": 1.6,
         "errors": []
       }
     ],
-    "auto_issues": [
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 31,
@@ -650,13 +642,13 @@
     "steps": [
       {
         "user": "Мы компания, хотим выставляться",
-        "reply": "1. Свяжитесь с организатором выставки – ООО «Агрос Экспо Групп».\nТел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com, сайт: agravia.org.\n2. Уточните условия участия и форму заявки через их контакт.\nЕсли нужна более подробная информация, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "reply": "Контакты организатора: ООО «Агрос Экспо Групп», тел. +7 (495) 128 29 59, e-mail agravia@agros-expo.com, сайт agravia.org. Цены, условия оплаты, формы заявки в данных нет. На оборудованной площади доступны стандартные застройки Octanorm, улучшенные стандарты №1–4 и системы Vinson, Towensend, Boxlight.\n\nХотите, передам вашу заявку менеджеру?",
         "intent": "participation",
         "role": "prospect",
         "clarify": false,
         "offer_manager": true,
         "confidence": "HIGH",
-        "sec": 1.9,
+        "sec": 6.1,
         "errors": []
       }
     ],
@@ -734,19 +726,17 @@
     "steps": [
       {
         "user": "Где оформить пропуск?",
-        "reply": "Оформить пропуск можно на сайте agravia.org в разделе «Получить билет»: заполните анкету, получите электронный билет и сохраните его. Вход на выставку осуществляется строго по бейджу.",
+        "reply": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
         "intent": "pass",
-        "role": "visitor",
-        "clarify": false,
+        "role": null,
+        "clarify": true,
         "offer_manager": false,
-        "confidence": "HIGH",
-        "sec": 1.2,
+        "confidence": "MEDIUM",
+        "sec": 1.1,
         "errors": []
       }
     ],
-    "auto_issues": [
-      "ожидалось уточнение, дан ответ"
-    ]
+    "auto_issues": []
   },
   {
     "n": 36,
@@ -778,13 +768,13 @@
     "steps": [
       {
         "user": "Как получить бейдж экспонента?",
-        "reply": "Информация о том, как получить бейдж экспонента, в предоставленных данных отсутствует.",
+        "reply": "Бейдж экспонента оформляется через Организатора в личном кабинете. Он действует на монтаж, работу и демонтаж выставки. Могу рассказать подробнее.",
         "intent": "badge",
         "role": "exhibitor",
         "clarify": false,
         "offer_manager": false,
         "confidence": "HIGH",
-        "sec": 1.2,
+        "sec": 12.5,
         "errors": []
       }
     ],
@@ -805,7 +795,7 @@
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.8,
+        "sec": 0.7,
         "errors": []
       }
     ],
@@ -957,7 +947,7 @@
         "clarify": false,
         "offer_manager": true,
         "confidence": "LOW",
-        "sec": 1.0,
+        "sec": 1.6,
         "errors": []
       }
     ],
@@ -1081,13 +1071,13 @@
     "steps": [
       {
         "user": "Когда заезжают экспоненты?",
-        "reply": "Заезд и регистрация экспонентов проходят 19 января с 10:00 до 16:00. Если нужна более подробная информация, дайте знать.",
+        "reply": "Заезд и регистрация экспонентов проходят 19 января, с 10:00 до 16:00.",
         "intent": "montage",
-        "role": "prospect",
+        "role": null,
         "clarify": false,
         "offer_manager": false,
         "confidence": "HIGH",
-        "sec": 1.1,
+        "sec": 1.4,
         "errors": []
       }
     ],
@@ -1102,13 +1092,13 @@
     "steps": [
       {
         "user": "Когда можно завезти оборудование?",
-        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "reply": "В данных нет информации о дате завоза оборудования. Для получения графика монтажа и заезда экспонентов можно обратиться к личному кабинету участника.",
         "intent": "equipment_in",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 1.2,
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.4,
         "errors": []
       }
     ],
@@ -1125,19 +1115,17 @@
     "steps": [
       {
         "user": "Как завезти оборудование на стенд?",
-        "reply": "Для ввоза оборудования на стенд нужно:\n\n1. Подготовить письмо «Письмо для ввоза и вывоза оборудования и экспонатов» на фирменном бланке компании, подписать и поставить печать руководителя, указать подробный список ввозимого оборудования.\n2. Скачайте бланк письма в личном кабинете участника или на сайте Крокус Экспо.\n3. Отправьте письмо менеджеру Организатора по e‑mail для штампа, а затем в Отдел «Сервис‑центр» (Service@Crocus‑Expo.ru) для визирования.\n4. Получите 3 экземпляра письма: для сервис‑центра, для охраны на монтаже и для охраны на демонтаже.\n\nПосле визирования можно загружать оборудование в Зону ПРР (ширина 30 м по периметру павильонов). Самостоятельная погрузка/выгрузка с кранов и погрузчиков запрещена. Если понадобится хранить тару, она должна быть размещена на паллете и храниться на складе, а не на стенде.",
+        "reply": "Для ввоза оборудования нужен «Письмо для ввоза и вывоза оборудования и экспонатов» на фирменном бланке компании с подписью и печатью руководителя, 3 экземпляра, которое визируется Организатором и Отделом «Сервис-центр». Самостоятельная погрузка/выгрузка и транспортировка с использованием кранов, погрузчиков и другой техники запрещены – оборудование доставляется через сервис-центр Крокус Экспо. Тара хранится на складе, а на стенд подаётся только после закрытия выставки по заявке.",
         "intent": "equipment_in",
         "role": null,
         "clarify": false,
         "offer_manager": false,
         "confidence": "HIGH",
-        "sec": 5.2,
+        "sec": 1.6,
         "errors": []
       }
     ],
-    "auto_issues": [
-      "слишком длинный ответ (829 симв.)"
-    ]
+    "auto_issues": []
   },
   {
     "n": 53,
@@ -1211,17 +1199,21 @@
     "steps": [
       {
         "user": "Куда ехать машине на разгрузку?",
-        "reply": "Уточните, пожалуйста: вы приезжаете как посетитель (парковка) или везёте оборудование на стенд?",
-        "intent": "vehicle_access",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
         "role": null,
-        "clarify": true,
-        "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.9,
-        "errors": []
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 1.0,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199327, Requested 1931. Please try again in 9m3.456s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
-    "auto_issues": []
+    "auto_issues": [
+      "intent=error, ожидался один из ['equipment_in', 'vehicle_access']"
+    ]
   },
   {
     "n": 57,
@@ -1232,17 +1224,21 @@
     "steps": [
       {
         "user": "Где посмотреть деловую программу?",
-        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
-        "intent": "business_program",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
         "role": null,
         "clarify": false,
         "offer_manager": true,
         "confidence": "LOW",
-        "sec": 1.3,
-        "errors": []
+        "sec": 0.6,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199298, Requested 1781. Please try again in 7m46.128s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
-    "auto_issues": []
+    "auto_issues": [
+      "intent=error, ожидался один из ['business_program']"
+    ]
   },
   {
     "n": 58,
@@ -1337,18 +1333,20 @@
     "steps": [
       {
         "user": "Во сколько начинаются мероприятия?",
-        "reply": "20 января 2027 (ср): 09:00–18:00\n21 января 2027 (чт): 09:00–18:00\n22 января 2027 (пт): 09:00–16:00\nЕсли нужна более подробная информация, дайте знать.",
-        "intent": "dates",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
         "role": null,
         "clarify": false,
-        "offer_manager": false,
-        "confidence": "HIGH",
-        "sec": 1.4,
-        "errors": []
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 0.6,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199275, Requested 1502. Please try again in 5m35.664s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
     "auto_issues": [
-      "intent=dates, ожидался один из ['business_program']"
+      "intent=error, ожидался один из ['business_program']"
     ]
   },
   {
@@ -1381,17 +1379,21 @@
     "steps": [
       {
         "user": "Как войти в личный кабинет?",
-        "reply": "Доступ в Личный кабинет высылается каждому участнику индивидуально Организатором. После получения логина и пароля вы можете войти на сайте, используя эти данные. Если их ещё не получили, уточните у менеджера.",
-        "intent": "cabinet",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
         "role": null,
         "clarify": false,
-        "offer_manager": false,
-        "confidence": "HIGH",
-        "sec": 1.4,
-        "errors": []
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 0.7,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199245, Requested 1498. Please try again in 5m20.976s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
-    "auto_issues": []
+    "auto_issues": [
+      "intent=error, ожидался один из ['cabinet']"
+    ]
   },
   {
     "n": 65,
@@ -1423,17 +1425,21 @@
     "steps": [
       {
         "user": "Дайте ссылку на личный кабинет",
-        "reply": "Ссылка на Личный кабинет в данных отсутствует. Если она появится, её можно будет найти в разделе «Контакты» Руководства участника.",
-        "intent": "cabinet",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
         "role": null,
         "clarify": false,
-        "offer_manager": false,
-        "confidence": "HIGH",
-        "sec": 1.1,
-        "errors": []
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 0.7,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199216, Requested 1512. Please try again in 5m14.496s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
-    "auto_issues": []
+    "auto_issues": [
+      "intent=error, ожидался один из ['cabinet']"
+    ]
   },
   {
     "n": 67,
@@ -1465,17 +1471,20 @@
     "steps": [
       {
         "user": "Как связаться с менеджером?",
-        "reply": "Контакты менеджеров по продажам, работе с экспонентами и техотдела закреплены по залам и приведены в разделе «Контакты» Руководства участника, а также доступны в Личном кабинете экспонента. Если нужно уточнить конкретный менеджер, зайдите в свой кабинет или откройте руководство участника.\n\nМогу также передать ваш вопрос менеджеру — он свяжется с вами.",
-        "intent": "contact",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
         "role": null,
         "clarify": false,
         "offer_manager": true,
-        "confidence": "HIGH",
-        "sec": 1.3,
-        "errors": []
+        "confidence": "LOW",
+        "sec": 0.6,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199181, Requested 1730. Please try again in 6m33.552s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
     "auto_issues": [
+      "intent=error, ожидался один из ['contact']",
       "нет ни одного из: ['495', 'agros', '@']"
     ]
   },
@@ -1488,18 +1497,20 @@
     "steps": [
       {
         "user": "Мне нужен человек, а не бот",
-        "reply": "Подскажите, что вам нужно: прийти на выставку как посетитель, участвовать как экспонент, монтаж и заезд или деловая программа?",
-        "intent": "help",
+        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
+        "intent": "other",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.7,
-        "errors": []
+        "sec": 0.5,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199152, Requested 1291. Please try again in 3m11.376s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
     "auto_issues": [
-      "intent=help, ожидался один из ['contact']",
+      "intent=other, ожидался один из ['contact']",
       "вместо ответа задан уточняющий вопрос",
       "нет ни одного из: ['495', 'agros', '@']"
     ]
@@ -1534,17 +1545,20 @@
     "steps": [
       {
         "user": "Можно номер менеджера?",
-        "reply": "Номера персональных менеджеров в данных нет.\n\nМогу также передать ваш вопрос менеджеру — он свяжется с вами.",
-        "intent": "contact",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
         "role": null,
         "clarify": false,
         "offer_manager": true,
-        "confidence": "HIGH",
-        "sec": 1.0,
-        "errors": []
+        "confidence": "LOW",
+        "sec": 0.7,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199129, Requested 1559. Please try again in 4m57.216s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
     "auto_issues": [
+      "intent=error, ожидался один из ['contact']",
       "нет ни одного из: ['495']"
     ]
   },
@@ -1860,39 +1874,46 @@
     "steps": [
       {
         "user": "Я экспонент",
-        "reply": "Хорошо, вы экспонент. Могу помочь с монтажом и заездом, пропусками, ввозом оборудования, личным кабинетом.",
-        "intent": "role_only",
-        "role": "exhibitor",
-        "clarify": false,
-        "offer_manager": false,
-        "confidence": "HIGH",
-        "sec": 0.9,
-        "errors": []
-      },
-      {
-        "user": "Когда монтаж?",
-        "reply": "Монтаж: 16 января – только залы 17 и 18, 14:00–19:00; 17–18 января – 08:00–19:00; 19 января – 08:00–19:00, заезд и регистрация 10:00–16:00, к 15:30 всё оборудование распаковано, к 16:00 стенды готовы. Если нужна уточнение – дайте знать.",
-        "intent": "montage",
-        "role": "exhibitor",
-        "clarify": false,
-        "offer_manager": false,
-        "confidence": "HIGH",
-        "sec": 1.1,
-        "errors": []
-      },
-      {
-        "user": "А оборудование когда завозить?",
-        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
-        "intent": "equipment_in",
-        "role": "exhibitor",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
+        "role": null,
         "clarify": false,
         "offer_manager": true,
         "confidence": "LOW",
-        "sec": 1.6,
-        "errors": []
+        "sec": 0.6,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199100, Requested 1636. Please try again in 5m17.952s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      },
+      {
+        "user": "Когда монтаж?",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
+        "role": null,
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 1.1,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199063, Requested 1843. Please try again in 6m31.392s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      },
+      {
+        "user": "А оборудование когда завозить?",
+        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
+        "intent": "error",
+        "role": null,
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 0.7,
+        "errors": [
+          "answer: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199040, Requested 1875. Please try again in 6m35.28s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
       }
     ],
     "auto_issues": [
+      "intent=error, ожидался один из ['entry', 'equipment_in', 'montage']",
       "нет ни одного из: ['январ']"
     ]
   },
