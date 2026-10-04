@@ -38,6 +38,7 @@ class ChatRequest(BaseModel):
     state: dict | None = None
     # Совместимость со старыми версиями виджета, присылавшими только роль.
     segment_hint: str | None = None
+    debug: bool = False  # вернуть в ответе диагностику ошибок провайдера (для QA)
 
 
 class ChatResponse(BaseModel):
@@ -50,6 +51,7 @@ class ChatResponse(BaseModel):
     intent: str | None = None
     role: str | None = None
     state: dict = {}
+    debug: list[str] | None = None
 
 
 class HandoffRequest(BaseModel):
@@ -92,6 +94,7 @@ def chat(req: ChatRequest):
     except Exception as exc:  # LLM-провайдер недоступен и т.п. — не отдаём 500 в виджет
         _log_dialog(session_id=session_id, message=req.message, error=repr(exc))
         result = chat_engine.error_result(req.state)
+        result.notes.append(f"answer: {exc!r}"[:500])
 
     _log_dialog(
         session_id=session_id,
@@ -116,6 +119,7 @@ def chat(req: ChatRequest):
         intent=result.intent,
         role=result.role,
         state=result.state,
+        debug=result.notes if req.debug else None,
     )
 
 

@@ -169,6 +169,7 @@ class EngineResult:
     fallback: bool
     offer_manager: bool
     state: dict = field(default_factory=dict)
+    notes: list = field(default_factory=list)  # диагностика (ошибки провайдера), не для пользователя
 
 
 def normalize_state(state: dict | None, segment_hint: str | None = None) -> dict:
@@ -212,13 +213,15 @@ def handle_message(
     history = (history or [])[-MAX_HISTORY:]
     state = normalize_state(state, segment_hint)
 
+    notes: list[str] = []
     try:
         route = router.classify(message, history, state)
         intent, role = route.intent, route.role or state["role"]
-    except Exception:
+    except Exception as exc:
         # Классификатор недоступен/ответил нечитаемо — не падаем: ведём как
         # обычный вопрос по базе с ранее известной ролью.
         intent, role = "other", state["role"]
+        notes.append(f"router: {exc!r}"[:500])
 
     pending = state["pending"]
     # Ответ на наш уточняющий вопрос ("Я экспонент") — это ответ по ТОЙ же
@@ -227,6 +230,7 @@ def handle_message(
         intent = pending["intent"]
 
     out = _route(session_id, message, history, state, intent, role)
+    out.notes = notes + out.notes
     _log(session_id, out, message)
     return out
 
