@@ -11,7 +11,15 @@ import re
 _BOLD_ITALIC = re.compile(r"(?<!\w)(\*\*\*|\*\*|__|\*|_)(?=\S)(.+?)(?<=\S)\1(?!\w)")
 
 
+# Модель любит подставлять типографские символы: неразрывный дефис в телефоне
+# ("758-0-911") и неразрывные пробелы ломают копирование номера/адреса и поиск
+# по тексту — заменяем на обычные.
+_TYPO = {"\u2011": "-", "\u2010": "-", "\u00a0": " ", "\u202f": " ", "\u2009": " "}
+
+
 def clean_markdown(text: str) -> str:
+    for src, dst in _TYPO.items():
+        text = text.replace(src, dst)
     text = text.replace("\r\n", "\n")
     # Заголовки: "## Заголовок" -> "Заголовок"
     text = re.sub(r"^\s{0,3}#{1,6}\s*", "", text, flags=re.MULTILINE)
@@ -28,3 +36,23 @@ def clean_markdown(text: str) -> str:
     text = re.sub(r"[ \t]+\n", "\n", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
+
+
+MORE_PHRASE = "Могу рассказать подробнее."
+
+
+def shorten(text: str, limit: int = 650) -> str:
+    """Страховка по длине (ТЗ v2, 3.6): если модель всё же написала слишком
+    много для мобильного окна, режем по границе строки/предложения и
+    предлагаем рассказать подробнее — детали не теряются, их можно запросить."""
+    if len(text) <= limit:
+        return text
+    cut = text[:limit]
+    for sep in ("\n", ". ", "; "):
+        pos = cut.rfind(sep)
+        if pos >= limit * 0.5:
+            cut = cut[: pos + (0 if sep == "\n" else 1)]
+            break
+    else:
+        cut = cut.rsplit(" ", 1)[0]
+    return f"{cut.rstrip()}\n\n{MORE_PHRASE}"

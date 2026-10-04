@@ -8,13 +8,14 @@
     "steps": [
       {
         "user": "Когда выставка?",
-        "reply": "AGRAVIA 2027 пройдёт с 20 по 22 января 2027 года в Москве, в МВЦ «Крокус Экспо», павильон 3. Если нужна точная информация о часах работы, дайте знать.",
+        "reply": "AGRAVIA 2027 пройдёт с 20 по 22 января 2027 года в Москве, в МВЦ «Крокус Экспо», павильон 3.",
         "intent": "dates",
         "role": null,
         "clarify": false,
         "offer_manager": false,
         "confidence": "HIGH",
-        "sec": 1.4
+        "sec": 1.3,
+        "errors": []
       }
     ],
     "auto_issues": []
@@ -34,7 +35,8 @@
         "clarify": false,
         "offer_manager": false,
         "confidence": "HIGH",
-        "sec": 1.2
+        "sec": 0.9,
+        "errors": []
       }
     ],
     "auto_issues": []
@@ -54,7 +56,8 @@
         "clarify": false,
         "offer_manager": false,
         "confidence": "HIGH",
-        "sec": 1.0
+        "sec": 1.1,
+        "errors": []
       }
     ],
     "auto_issues": []
@@ -68,19 +71,17 @@
     "steps": [
       {
         "user": "В какие дни будет выставка?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "AGRAVIA 2027 пройдёт с 20 по 22 января 2027 года.",
+        "intent": "dates",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.7
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.6,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['dates']",
-      "нет фактов: ['20', '22']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 5,
@@ -91,19 +92,17 @@
     "steps": [
       {
         "user": "Подскажите даты проведения",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "AGRAVIA 2027 пройдёт с 20 по 22 января 2027 года.",
+        "intent": "dates",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.8
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.8,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['dates']",
-      "нет фактов: ['20', '22']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 6,
@@ -114,20 +113,17 @@
     "steps": [
       {
         "user": "А по числам когда?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "AGRAVIA 2027 пройдёт с 20 по 22 января 2027 года. Если нужны часы работы, дайте знать.",
+        "intent": "dates",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['dates']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет фактов: ['20', '22']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 7,
@@ -138,19 +134,17 @@
     "steps": [
       {
         "user": "Где проходит выставка?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "МВЦ «Крокус Экспо», павильон 3 (1 и 3 этажи). Адрес: Московская область, г. Красногорск, ул. Международная, д. 20.",
+        "intent": "location",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.8,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['location']",
-      "нет ни одного из: ['крокус', 'павильон']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 8,
@@ -161,19 +155,17 @@
     "steps": [
       {
         "user": "Какой адрес у AGRAVIA?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Адрес площадки: Московская область, г. Красногорск, ул. Международная, д. 20. Если нужна более подробная информация, дайте знать.",
+        "intent": "location",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['location']",
-      "нет ни одного из: ['красногорск', 'международная']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 9,
@@ -184,19 +176,17 @@
     "steps": [
       {
         "user": "Куда ехать на выставку?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "МВЦ «Крокус Экспо», павильон 3 (1 и 3 этажи). Адрес: Московская область, г. Красногорск, ул. Международная, д. 20.",
+        "intent": "location",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.8
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['location']",
-      "нет ни одного из: ['крокус', 'мякинино']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 10,
@@ -207,19 +197,17 @@
     "steps": [
       {
         "user": "Где вы находитесь?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "МВЦ «Крокус Экспо», павильон 3 (1 и 3 этажи). Адрес: Московская область, г. Красногорск, ул. Международная, д. 20.",
+        "intent": "location",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.5,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['location']",
-      "нет ни одного из: ['крокус', 'красногорск']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 11,
@@ -230,19 +218,17 @@
     "steps": [
       {
         "user": "В каком павильоне будет AGRAVIA?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Павильон 3 (1 и 3 этажи).",
+        "intent": "location",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['location']",
-      "нет ни одного из: ['павильон 3', 'павильон №3']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 12,
@@ -253,19 +239,17 @@
     "steps": [
       {
         "user": "Как получить билет?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Регистрация бесплатная — нужно заполнить анкету на сайте agravia.org (раздел «Получить билет»): 1) указать e‑mail, 2) перейти по ссылке из письма, 3) заполнить электронную анкету, 4) сохранить электронный билет из почты. Вход на выставку строго по бейджу.",
+        "intent": "visitor_registration",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.0,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 13,
@@ -276,17 +260,18 @@
     "steps": [
       {
         "user": "Где взять бейдж?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Уточните, пожалуйста: бейдж нужен посетителю или экспоненту?",
+        "intent": "badge",
         "role": null,
-        "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.7
+        "clarify": true,
+        "offer_manager": false,
+        "confidence": "MEDIUM",
+        "sec": 2.8,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['badge', 'visitor_registration']"
+      "вместо ответа задан уточняющий вопрос"
     ]
   },
   {
@@ -298,21 +283,17 @@
     "steps": [
       {
         "user": "Как зарегистрироваться?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Регистрация бесплатная. Перейдите на agravia.org, раздел «Получить билет»: 1) укажите e‑mail, 2) откройте письмо с подтверждением, 3) перейдите по ссылке, 4) заполните электронную анкету и сохраните билет. Вход на выставку осуществляется по бейджу. Если возникнут проблемы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911.",
+        "intent": "visitor_registration",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['visitor_registration']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['agravia.org', 'регистрац']",
-      "запрещённое содержание: ['монтаж']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 15,
@@ -323,19 +304,17 @@
     "steps": [
       {
         "user": "Хочу попасть на выставку, что делать?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "1. Перейдите на agravia.org в раздел «Получить билет».\n2. Заполните анкету: укажите e‑mail, перейдите по ссылке из письма, заполните электронную анкету.\n3. Сохраните электронный билет из почты.\nВход на выставку осуществляется строго по бейджу. Если возникнут проблемы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911 (пн–пт, 10:00–18:00 МСК).",
+        "intent": "visitor_registration",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 16,
@@ -346,17 +325,17 @@
     "steps": [
       {
         "user": "Как посетить AGRAVIA?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "intent": "visitor_registration",
+        "role": "visitor",
         "clarify": false,
         "offer_manager": true,
         "confidence": "LOW",
-        "sec": 0.4
+        "sec": 1.1,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
       "нет ни одного из: ['agravia.org', 'регистрац']"
     ]
   },
@@ -369,19 +348,17 @@
     "steps": [
       {
         "user": "Где регистрация для посетителей?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Регистрация для посетителей проходит на сайте agravia.org в разделе «Получить билет». Нужно заполнить анкету, указать e‑mail, перейти по ссылке из письма, заполнить электронную анкету и сохранить электронный билет. Если возникнут вопросы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911.",
+        "intent": "visitor_registration",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 18,
@@ -392,19 +369,17 @@
     "steps": [
       {
         "user": "Мне нужен билет на выставку",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Регистрация бесплатная — нужно заполнить анкету на сайте agravia.org (раздел «Получить билет»):\n1. Указать e‑mail.\n2. Перейти по ссылке из письма.\n3. Заполнить электронную анкету.\n4. Сохранить электронный билет из почты.\nВход на выставку строго по бейджу. Если возникнут проблемы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911 (пн–пт, 10:00–18:00 МСК).",
+        "intent": "visitor_registration",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 19,
@@ -415,19 +390,17 @@
     "steps": [
       {
         "user": "Хочу прийти как посетитель",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Вход бесплатный, но нужен билет. Зарегистрируйтесь на agravia.org в разделе «Получить билет»: 1) укажите e‑mail, 2) откройте письмо и перейдите по ссылке, 3) заполните анкету, 4) сохраните электронный билет. На входе предъявляйте бейдж. Если возникнут проблемы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911 (пн–пт, 10:00–18:00).",
+        "intent": "visitor_registration",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 20,
@@ -438,19 +411,17 @@
     "steps": [
       {
         "user": "А мне куда нажать, чтобы прийти?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Нажмите на сайте agravia.org в разделе «Получить билет». Там вы заполните анкету: укажите e‑mail, перейдите по ссылке из письма, заполните электронную анкету и сохраните билет из почты. Вход на выставку будет по бейджу. Если возникнут вопросы, пишите agravia@expodat.com.",
+        "intent": "visitor_registration",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['visitor_registration']",
-      "запрещённое содержание: ['монтаж']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 21,
@@ -461,20 +432,18 @@
     "steps": [
       {
         "user": "Как мне попасть внутрь как гостю?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
-        "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 1.1,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=other, ожидался один из ['visitor_registration']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['agravia.org', 'регистрац']",
-      "запрещённое содержание: ['монтаж']"
+      "нет ни одного из: ['agravia.org', 'регистрац']"
     ]
   },
   {
@@ -486,17 +455,17 @@
     "steps": [
       {
         "user": "Есть ссылка на регистрацию?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Ссылка в данных отсутствует.",
+        "intent": "visitor_registration",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 0.9,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
       "нет ни одного из: ['agravia.org']"
     ]
   },
@@ -509,18 +478,18 @@
     "steps": [
       {
         "user": "Нужен пропуск посетителя",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Нужен пропуск?\nРегистрация бесплатная:\n1. Зайти на agravia.org → раздел «Получить билет».\n2. Ввести e‑mail.\n3. Перейти по ссылке из письма.\n4. Заполнить электронную анкету.\n5. Сохранить электронный билет из почты.\nВход на выставку осуществляется по бейджу. Если возникнут вопросы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911 (пн–пт, 10:00–18:00).",
+        "intent": "pass",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 3.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.1,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
+      "intent=pass, ожидался один из ['visitor_registration']"
     ]
   },
   {
@@ -532,19 +501,17 @@
     "steps": [
       {
         "user": "Как стать участником?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "1. Свяжитесь с организатором: ООО «Агрос Экспо Групп», Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com.\n2. Уточните условия участия и получите форму заявки.\n3. После заполнения и отправки заявки организатор уточнит дальнейшие шаги.\nЕсли нужна более подробная информация, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['participation']",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 25,
@@ -555,19 +522,17 @@
     "steps": [
       {
         "user": "Хочу участвовать в выставке",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Для участия свяжитесь с организатором: ООО «Агрос Экспо Групп». Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com, сайт: agravia.org. Если хотите подробнее, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.9,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['participation']",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 26,
@@ -578,19 +543,17 @@
     "steps": [
       {
         "user": "Как выставить стенд?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "1. Выберите тип площади: оборудованную или необорудованную.\n2. Для оборудованной площади: застройку обеспечивает Генеральный застройщик «БилдЭкспо». Вы можете заказать стандартный Octanorm‑стенд или улучшенный №1–4, а также системы Vinson, Towensend, Boxlight. Для повышения категории стенда обратитесь к менеджеру Организатора.\n3. Для необорудованной площади: застройку выполняет сам участник (или по договору с застройщиком). Передайте копию Руководства участника своему застройщику.\n4. Свяжитесь с Организатором – ООО «Агрос Экспо Групп»: +7 (495) 128 29 59, agravia@agros-expo.com.\nЕсли нужны детали, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 2.6
+        "confidence": "HIGH",
+        "sec": 1.8,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['participation']",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 27,
@@ -601,19 +564,17 @@
     "steps": [
       {
         "user": "Хочу стать экспонентом",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Чтобы стать экспонентом, свяжитесь с организатором выставки: ООО «Агрос Экспо Групп». Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com. Если хотите подробнее, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 1.1
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['participation']",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 28,
@@ -624,19 +585,17 @@
     "steps": [
       {
         "user": "Сколько стоит участие?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "В данных нет информации о стоимости участия. Если хотите узнать цены, свяжитесь с организатором: ООО «Агрос Экспо Групп», Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.6,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['participation']",
-      "нет ни одного из: ['нет', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 29,
@@ -647,19 +606,17 @@
     "steps": [
       {
         "user": "Куда подать заявку на участие?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "В данных нет информации о форме или месте подачи заявки. Если нужна точная инструкция, уточните у организатора.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.7
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['participation']",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 30,
@@ -670,18 +627,17 @@
     "steps": [
       {
         "user": "Как забронировать стенд?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
-        "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 4.5
+        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "intent": "participation",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 1.0,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=other, ожидался один из ['participation']",
-      "вместо ответа задан уточняющий вопрос",
       "нет ни одного из: ['495', 'agros', 'организатор']"
     ]
   },
@@ -694,20 +650,17 @@
     "steps": [
       {
         "user": "Мы компания, хотим выставляться",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
-        "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "reply": "1. Свяжитесь с организатором выставки – ООО «Агрос Экспо Групп».\nТел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com, сайт: agravia.org.\n2. Уточните условия участия и форму заявки через их контакт.\nЕсли нужна более подробная информация, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "HIGH",
+        "sec": 1.9,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['participation']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 32,
@@ -718,20 +671,17 @@
     "steps": [
       {
         "user": "С кем связаться по участию?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
-        "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "reply": "Кто организатор выставки и как с ним связаться?\nОрганизатор — ООО «Агрос Экспо Групп». Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com, сайт: agravia.org. Соцсети: Telegram t.me/agros_expo, VK vk.com/agros.expo, Rutube.\n\nМогу также передать ваш вопрос менеджеру — он свяжется с вами.",
+        "intent": "contact",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['contact', 'participation']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 33,
@@ -742,19 +692,17 @@
     "steps": [
       {
         "user": "Мне нужен пропуск",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
+        "intent": "pass",
         "role": null,
-        "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "clarify": true,
+        "offer_manager": false,
+        "confidence": "MEDIUM",
+        "sec": 1.0,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['pass']",
-      "ожидалось уточнение, дан ответ"
-    ]
+    "auto_issues": []
   },
   {
     "n": 34,
@@ -765,19 +713,17 @@
     "steps": [
       {
         "user": "Как получить пропуск?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
+        "intent": "pass",
         "role": null,
-        "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "clarify": true,
+        "offer_manager": false,
+        "confidence": "MEDIUM",
+        "sec": 1.0,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['pass']",
-      "ожидалось уточнение, дан ответ"
-    ]
+    "auto_issues": []
   },
   {
     "n": 35,
@@ -788,17 +734,18 @@
     "steps": [
       {
         "user": "Где оформить пропуск?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
+        "reply": "Оформить пропуск можно на сайте agravia.org в разделе «Получить билет»: заполните анкету, получите электронный билет и сохраните его. Вход на выставку осуществляется строго по бейджу.",
+        "intent": "pass",
+        "role": "visitor",
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=other, ожидался один из ['pass']"
+      "ожидалось уточнение, дан ответ"
     ]
   },
   {
@@ -810,19 +757,17 @@
     "steps": [
       {
         "user": "Мне нужен бейдж",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Уточните, пожалуйста: бейдж нужен посетителю или экспоненту?",
+        "intent": "badge",
         "role": null,
-        "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "clarify": true,
+        "offer_manager": false,
+        "confidence": "MEDIUM",
+        "sec": 0.7,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['badge', 'pass']",
-      "ожидалось уточнение, дан ответ"
-    ]
+    "auto_issues": []
   },
   {
     "n": 37,
@@ -833,19 +778,17 @@
     "steps": [
       {
         "user": "Как получить бейдж экспонента?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Информация о том, как получить бейдж экспонента, в предоставленных данных отсутствует.",
+        "intent": "badge",
+        "role": "exhibitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 1.0
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['badge', 'pass']",
-      "нет ни одного из: ['бейдж']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 38,
@@ -856,18 +799,18 @@
     "steps": [
       {
         "user": "Нужен монтажный пропуск",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
+        "intent": "pass",
         "role": null,
-        "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.9
+        "clarify": true,
+        "offer_manager": false,
+        "confidence": "MEDIUM",
+        "sec": 0.8,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['pass']",
-      "нет ни одного из: ['монтаж']"
+      "вместо ответа задан уточняющий вопрос"
     ]
   },
   {
@@ -880,29 +823,28 @@
     "steps": [
       {
         "user": "Как получить бейдж экспонента?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Бейдж экспонента оформляется через Организатора в личном кабинете участника. После регистрации и подтверждения участия вы получите его в личном кабинете. Если понадобится, уточните детали в системе.",
+        "intent": "badge",
+        "role": "exhibitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       },
       {
         "user": "А если я посетитель?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Для посетителей бейдж не выдаётся – вход бесплатный, но требуется онлайн‑регистрация и электронный билет, который вы сохраняете в почте. При входе предъявляйте билет. Если нужна дополнительная информация, дайте знать.",
+        "intent": "badge",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['badge', 'pass', 'visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 40,
@@ -914,31 +856,28 @@
     "steps": [
       {
         "user": "Нужен монтажный пропуск",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
-        "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
-      },
-      {
-        "user": "Нет, я про билет, не про монтаж",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
+        "intent": "pass",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.5
+        "sec": 0.9,
+        "errors": []
+      },
+      {
+        "user": "Нет, я про билет, не про монтаж",
+        "reply": "Билет на выставку получаем через онлайн‑регистрацию: заполняем анкету в разделе «Получить билет» на agravia.org, подтверждаем e‑mail, заполняем форму и сохраняем электронный билет из письма. Вход на площадку осуществляется по бейджу. Если возникнут вопросы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911 (пн–пт, 10:00–18:00).",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['visitor_registration']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['agravia.org', 'регистрац']",
-      "запрещённое содержание: ['монтаж']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 41,
@@ -949,19 +888,17 @@
     "steps": [
       {
         "user": "Когда монтаж?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Монтаж стендов: 16 января (только залы 17 и 18, 14:00–19:00), 17–18 января (08:00–19:00). 19 января — монтаж и оформление экспозиции, 08:00–19:00. Заезд и регистрация экспонентов 10:00–16:00. К 15:30 всё оборудование должно быть распаковано, к 16:00 — завершающая уборка, все стенды готовы. Если нужна более подробная информация, дайте знать.",
+        "intent": "montage",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.1,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['montage']",
-      "нет ни одного из: ['19 января', '17']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 42,
@@ -972,19 +909,17 @@
     "steps": [
       {
         "user": "Какие даты монтажа?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Монтаж необорудованной площади: 16 января (только залы 17 и 18, 14:00–19:00), 17–18 января (08:00–19:00). 19 января — монтаж и оформление экспозиции, в т.ч. оборудованной площади, 08:00–19:00.",
+        "intent": "montage",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.9,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['montage']",
-      "нет ни одного из: ['19 января', '17']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 43,
@@ -995,20 +930,17 @@
     "steps": [
       {
         "user": "Когда начинается застройка?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Монтаж стендов начинается 16 января: 14:00–19:00 только в залах 17 и 18.\n17–18 января – 08:00–19:00 в любых павильонах.\n19 января (вторник) – 08:00–19:00, включая заезд и регистрацию экспонентов 10:00–16:00.\nЕсли нужна более подробная информация, дайте знать.",
+        "intent": "montage",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['montage']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['19 января', '17']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 44,
@@ -1019,17 +951,17 @@
     "steps": [
       {
         "user": "Когда можно собирать стенд?",
-        "reply": "Сбор стенда возможен в рамках демонтажа: 22 января с 16:00 до 18:00 – вывоз крупногабаритных экспонатов; с 18:00 до 19:00 – въезд машин участников для вывоза. 23 января (суббота) 08:00–16:00 – демонтаж, 16:00–18:00 – окончательная уборка. После 18:00 павильон должен быть полностью освобожден.",
-        "intent": "other",
+        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "intent": "montage",
         "role": null,
         "clarify": false,
-        "offer_manager": false,
-        "confidence": "HIGH",
-        "sec": 17.1
+        "offer_manager": true,
+        "confidence": "LOW",
+        "sec": 1.0,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=other, ожидался один из ['montage']",
       "нет ни одного из: ['19 января', '17']"
     ]
   },
@@ -1042,19 +974,17 @@
     "steps": [
       {
         "user": "Когда демонтаж?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "22 января с 16:00 до 18:00 — вывоз крупногабаритных экспонатов по графику Организатора (въезд застройщиков в зону ПРР запрещён), с 18:00 до 19:00 — въезд машин участников для вывоза экспонатов, оборудованная площадь должна быть освобождена. 23 января (суббота) 08:00–16:00 — демонтаж, 16:00–18:00 — окончательная уборка, павильон должен быть полностью освобожден.",
+        "intent": "demontage",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 1.0
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['demontage']",
-      "нет ни одного из: ['22 января', '23 января']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 46,
@@ -1065,17 +995,17 @@
     "steps": [
       {
         "user": "Когда можно разбирать стенд?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Демонтаж стендов начинается 22 января с 16:00 до 18:00 – вывоз крупногабаритных экспонатов по графику Организатора. С 18:00 до 19:00 – въезд машин участников для вывоза экспонатов, площадь должна быть освобождена. 23 января (суббота) 08:00–16:00 – демонтаж, 16:00–18:00 – окончательная уборка, павильон полностью освобожден. Если нужна более подробная информация, дайте знать.",
+        "intent": "demontage",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['demontage']",
       "нет ни одного из: ['22 января', '23 января']"
     ]
   },
@@ -1088,20 +1018,17 @@
     "steps": [
       {
         "user": "До скольки можно работать на монтаже?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "В последний день монтажа (19 января) все основные работы по оформлению стендов и расстановке экспонатов должны быть завершены к 16:00. До 19:00 разрешены только мелкие оформительские работы. Если нужна более подробная информация, дайте знать.",
+        "intent": "montage",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['montage']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['19:00']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 48,
@@ -1112,19 +1039,17 @@
     "steps": [
       {
         "user": "Можно приехать на монтаж вечером?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Вечером монтаж не допускается. По расписанию работы: 16 января – 14:00 – 19:00, 17–18 января – 08:00 – 19:00, 19 января – 08:00 – 19:00. Если нужна помощь с графиком, дайте знать.",
+        "intent": "montage",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['entry', 'montage']",
-      "нет ни одного из: ['19:00']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 49,
@@ -1135,18 +1060,17 @@
     "steps": [
       {
         "user": "Когда заезд?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Уточните, пожалуйста: вы спрашиваете про заезд экспонентов, монтажной команды или завоз оборудования?",
+        "intent": "entry",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.3
+        "sec": 1.0,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['entry']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 50,
@@ -1157,20 +1081,17 @@
     "steps": [
       {
         "user": "Когда заезжают экспоненты?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
+        "reply": "Заезд и регистрация экспонентов проходят 19 января с 10:00 до 16:00. Если нужна более подробная информация, дайте знать.",
+        "intent": "montage",
+        "role": "prospect",
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.1,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['entry', 'montage']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['19 января', '10:00']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 51,
@@ -1181,17 +1102,17 @@
     "steps": [
       {
         "user": "Когда можно завезти оборудование?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "intent": "equipment_in",
         "role": null,
         "clarify": false,
         "offer_manager": true,
         "confidence": "LOW",
-        "sec": 0.4
+        "sec": 1.2,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['equipment_in']",
       "нет ни одного из: ['январ']"
     ]
   },
@@ -1204,18 +1125,18 @@
     "steps": [
       {
         "user": "Как завезти оборудование на стенд?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Для ввоза оборудования на стенд нужно:\n\n1. Подготовить письмо «Письмо для ввоза и вывоза оборудования и экспонатов» на фирменном бланке компании, подписать и поставить печать руководителя, указать подробный список ввозимого оборудования.\n2. Скачайте бланк письма в личном кабинете участника или на сайте Крокус Экспо.\n3. Отправьте письмо менеджеру Организатора по e‑mail для штампа, а затем в Отдел «Сервис‑центр» (Service@Crocus‑Expo.ru) для визирования.\n4. Получите 3 экземпляра письма: для сервис‑центра, для охраны на монтаже и для охраны на демонтаже.\n\nПосле визирования можно загружать оборудование в Зону ПРР (ширина 30 м по периметру павильонов). Самостоятельная погрузка/выгрузка с кранов и погрузчиков запрещена. Если понадобится хранить тару, она должна быть размещена на паллете и храниться на складе, а не на стенде.",
+        "intent": "equipment_in",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.7
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 5.2,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['equipment_in']",
-      "нет ни одного из: ['письм', 'прр', 'пропуск']"
+      "слишком длинный ответ (829 симв.)"
     ]
   },
   {
@@ -1227,19 +1148,17 @@
     "steps": [
       {
         "user": "Когда вывоз оборудования?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Вывоз оборудования возможен только после закрытия выставки для посетителей, согласно графику в разделе «Расписание работы выставки».\n\nКлючевые даты:\n22 января 16:00‑18:00 – вывоз крупногабаритных экспонатов; 18:00‑19:00 – въезд машин участников.\n23 января 08:00‑16:00 – демонтаж, 16:00‑18:00 – окончательная уборка.\n\nЕсли нужна более подробная информация, дайте знать.",
+        "intent": "equipment_out",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.1,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['equipment_out']",
-      "нет ни одного из: ['22 января', 'закрытия']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 54,
@@ -1250,19 +1169,17 @@
     "steps": [
       {
         "user": "Какие документы нужны для ввоза оборудования?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Требуется «Письмо для ввоза и вывоза оборудования и экспонатов» на фирменном бланке компании с подписью и печатью руководителя, с подробным описанием ввозимого оборудования. Бланк можно скачать в личном кабинете участника или на сайте Крокус Экспо. Письмо визируется штампами Организатора и Отдела «Сервис‑центр»; нужно 3 экземпляра (для сервис‑центра, для охраны на монтаже, для охраны на демонтаже). Если нужна более подробная информация, дайте знать.",
+        "intent": "equipment_in",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['equipment_in']",
-      "нет ни одного из: ['письм']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 55,
@@ -1273,18 +1190,17 @@
     "steps": [
       {
         "user": "Можно ли заехать на машине на территорию?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Уточните, пожалуйста: вы приезжаете как посетитель (парковка) или везёте оборудование на стенд?",
+        "intent": "vehicle_access",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.4
+        "sec": 0.6,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['vehicle_access']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 56,
@@ -1295,18 +1211,17 @@
     "steps": [
       {
         "user": "Куда ехать машине на разгрузку?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Уточните, пожалуйста: вы приезжаете как посетитель (парковка) или везёте оборудование на стенд?",
+        "intent": "vehicle_access",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.3
+        "sec": 0.9,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['equipment_in', 'vehicle_access']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 57,
@@ -1317,18 +1232,17 @@
     "steps": [
       {
         "user": "Где посмотреть деловую программу?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "intent": "business_program",
         "role": null,
         "clarify": false,
         "offer_manager": true,
         "confidence": "LOW",
-        "sec": 0.5
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['business_program']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 58,
@@ -1339,18 +1253,17 @@
     "steps": [
       {
         "user": "Какая программа будет на выставке?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Более 150 мероприятий: конференции, круглые столы, мастер‑классы и панельные дискуссии с участниками Минсельхоза, отраслевых союзов, науки и бизнеса. Ключевые темы – животноводство и растениеводство. Хотите подробнее?",
+        "intent": "business_program",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.5,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['business_program']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 59,
@@ -1361,20 +1274,17 @@
     "steps": [
       {
         "user": "Будут конференции?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Да, в деловой программе выставки более 150 мероприятий, среди которых конференции, круглые столы, мастер‑классы и панельные дискуссии. Если хотите узнать конкретные даты и темы, дайте знать.",
+        "intent": "business_program",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.3
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['business_program']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['конференц']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 60,
@@ -1385,18 +1295,17 @@
     "steps": [
       {
         "user": "Где расписание мероприятий?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Расписания по дням в данных нет. В наличии только общая информация о том, что на выставке более 150 мероприятий: конференции, круглые столы, мастер‑классы и панельные дискуссии. Если нужна более подробная информация, дайте знать.",
+        "intent": "business_program",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['business_program']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 61,
@@ -1407,18 +1316,17 @@
     "steps": [
       {
         "user": "Что будет по деловой программе?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Более 150 мероприятий: конференции, круглые столы, мастер‑классы и панельные дискуссии с участниками Минсельхоза, отраслевых союзов, ассоциаций, науки и бизнеса. Ключевые темы – животноводство и растениеводство, каждый раздел ведёт свой руководитель деловой программы. Хотите подробнее?",
+        "intent": "business_program",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 3.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.5,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['business_program']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 62,
@@ -1429,17 +1337,18 @@
     "steps": [
       {
         "user": "Во сколько начинаются мероприятия?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "20 января 2027 (ср): 09:00–18:00\n21 января 2027 (чт): 09:00–18:00\n22 января 2027 (пт): 09:00–16:00\nЕсли нужна более подробная информация, дайте знать.",
+        "intent": "dates",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['business_program']"
+      "intent=dates, ожидался один из ['business_program']"
     ]
   },
   {
@@ -1451,18 +1360,17 @@
     "steps": [
       {
         "user": "Где личный кабинет?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Доступ в Личный кабинет высылается каждому участнику индивидуально Организатором.",
+        "intent": "cabinet",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 2.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['cabinet']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 64,
@@ -1473,18 +1381,17 @@
     "steps": [
       {
         "user": "Как войти в личный кабинет?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Доступ в Личный кабинет высылается каждому участнику индивидуально Организатором. После получения логина и пароля вы можете войти на сайте, используя эти данные. Если их ещё не получили, уточните у менеджера.",
+        "intent": "cabinet",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['cabinet']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 65,
@@ -1495,18 +1402,17 @@
     "steps": [
       {
         "user": "Не могу найти кабинет участника",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Доступ в Личный кабинет высылается каждому участнику индивидуально Организатором. Если вы его ещё не получили, уточните у вашего персонального менеджера.",
+        "intent": "cabinet",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.5,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['cabinet']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 66,
@@ -1517,18 +1423,17 @@
     "steps": [
       {
         "user": "Дайте ссылку на личный кабинет",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Ссылка на Личный кабинет в данных отсутствует. Если она появится, её можно будет найти в разделе «Контакты» Руководства участника.",
+        "intent": "cabinet",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.1,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['cabinet']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 67,
@@ -1539,18 +1444,17 @@
     "steps": [
       {
         "user": "Где кабинет экспонента?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Доступ в Личный кабинет экспонента высылается каждому участнику индивидуально Организатором. Если вы его ещё не получили, уточните у вашего персонального менеджера – контакты менеджеров находятся в разделе «Контакты» Руководства участника. Если нужна помощь, дайте знать.",
+        "intent": "cabinet",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['cabinet']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 68,
@@ -1561,17 +1465,17 @@
     "steps": [
       {
         "user": "Как связаться с менеджером?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Контакты менеджеров по продажам, работе с экспонентами и техотдела закреплены по залам и приведены в разделе «Контакты» Руководства участника, а также доступны в Личном кабинете экспонента. Если нужно уточнить конкретный менеджер, зайдите в свой кабинет или откройте руководство участника.\n\nМогу также передать ваш вопрос менеджеру — он свяжется с вами.",
+        "intent": "contact",
         "role": null,
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['contact']",
       "нет ни одного из: ['495', 'agros', '@']"
     ]
   },
@@ -1584,17 +1488,18 @@
     "steps": [
       {
         "user": "Мне нужен человек, а не бот",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Подскажите, что вам нужно: прийти на выставку как посетитель, участвовать как экспонент, монтаж и заезд или деловая программа?",
+        "intent": "help",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.4
+        "sec": 0.7,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=other, ожидался один из ['contact']",
+      "intent=help, ожидался один из ['contact']",
       "вместо ответа задан уточняющий вопрос",
       "нет ни одного из: ['495', 'agros', '@']"
     ]
@@ -1608,20 +1513,17 @@
     "steps": [
       {
         "user": "Кому написать по участию?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
-        "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "reply": "Кому написать по участию: ООО «Агрос Экспо Групп». Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com. Сайт: agravia.org. Соцсети: Telegram t.me/agros_expo, VK vk.com/agros.expo, Rutube. Если хотите подробнее, дайте знать.\n\nМогу также передать ваш вопрос менеджеру — он свяжется с вами.",
+        "intent": "contact",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['contact', 'participation']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['495', 'agros', '@']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 71,
@@ -1632,17 +1534,17 @@
     "steps": [
       {
         "user": "Можно номер менеджера?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Номера персональных менеджеров в данных нет.\n\nМогу также передать ваш вопрос менеджеру — он свяжется с вами.",
+        "intent": "contact",
         "role": null,
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "confidence": "HIGH",
+        "sec": 1.0,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['contact']",
       "нет ни одного из: ['495']"
     ]
   },
@@ -1656,30 +1558,28 @@
     "steps": [
       {
         "user": "Я экспонент",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Хорошо, вы экспонент. Могу помочь с монтажом и заездом, пропусками, ввозом оборудования, личным кабинетом.",
+        "intent": "role_only",
+        "role": "exhibitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 0.7,
+        "errors": []
       },
       {
         "user": "Когда заезд?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
+        "reply": "Заезд и регистрация экспонентов в 19 января: 10:00 – 16:00.",
+        "intent": "entry",
+        "role": "exhibitor",
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['entry', 'montage']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['19 января', '10:00']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 73,
@@ -1691,28 +1591,29 @@
     "steps": [
       {
         "user": "Я посетитель",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Хорошо, вы посетитель. Могу помочь с билетом и регистрацией, как добраться, деловой программой.",
+        "intent": "role_only",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 0.7,
+        "errors": []
       },
       {
         "user": "Как получить пропуск?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Регистрация бесплатная: 1) зайдите на agravia.org, раздел «Получить билет». 2) Укажите e‑mail. 3) Перейдите по ссылке из письма. 4) Заполните электронную анкету. 5) Сохраните электронный билет из почты. Вход на выставку только по бейджу. Если понадобится помощь, пишите agravia@expodat.com.",
+        "intent": "pass",
+        "role": "visitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 2.3
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['visitor_registration']",
-      "нет ни одного из: ['agravia.org', 'регистрац']"
+      "intent=pass, ожидался один из ['visitor_registration']"
     ]
   },
   {
@@ -1725,29 +1626,28 @@
     "steps": [
       {
         "user": "Хочу участвовать",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Для участия свяжитесь с организатором: ООО «Агрос Экспо Групп». Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com. Если хотите подробнее, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "confidence": "HIGH",
+        "sec": 3.1,
+        "errors": []
       },
       {
         "user": "А сколько стоит?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "В данных нет информации о стоимости участия.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.8
+        "confidence": "HIGH",
+        "sec": 1.4,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['participation']",
-      "нет ни одного из: ['нет']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 75,
@@ -1765,23 +1665,22 @@
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.6
+        "sec": 0.6,
+        "errors": []
       },
       {
         "user": "Я экспонент",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Для экспонента достаточно бейджа экспонента – отдельный монтажный пропуск не требуется.",
+        "intent": "pass",
+        "role": "exhibitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.8
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.0,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['pass']",
-      "нет ни одного из: ['бейдж', 'пропуск']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 76,
@@ -1793,31 +1692,28 @@
     "steps": [
       {
         "user": "Мне нужен пропуск",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
-        "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
-      },
-      {
-        "user": "Нет, я про билет",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
+        "intent": "pass",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.4
+        "sec": 0.7,
+        "errors": []
+      },
+      {
+        "user": "Нет, я про билет",
+        "reply": "Регистрация бесплатная — нужно заполнить анкету на сайте agravia.org в разделе «Получить билет»: 1) указать e‑mail, 2) перейти по ссылке из письма, 3) заполнить электронную анкету, 4) сохранить электронный билет из почты. Вход на выставку строго по бейджу. Если возникнут проблемы, пишите agravia@expodat.com или звоните +7 (499) 758‑0‑911.",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['visitor_registration']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['agravia.org', 'регистрац']",
-      "запрещённое содержание: ['монтаж']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 77,
@@ -1829,27 +1725,28 @@
     "steps": [
       {
         "user": "Когда монтаж?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Монтаж стендов: 16 января (только залы 17 и 18, 14:00–19:00), 17–18 января (08:00–19:00). 19 января – монтаж и оформление экспозиции, 08:00–19:00. Если нужна более подробная информация, дайте знать.",
+        "intent": "montage",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.6
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.3,
+        "errors": []
       },
       {
         "user": "А демонтаж?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Демонтаж: 22 января с 16:00 до 18:00 – вывоз крупногабаритных экспонатов; с 18:00 до 19:00 – въезд машин участников для вывоза. 23 января (суббота) 08:00–16:00 – демонтаж; 16:00–18:00 – окончательная уборка, павильон должен быть полностью освобожден.",
+        "intent": "demontage",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.6,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['demontage']",
       "нет ни одного из: ['22 января', '23 января']"
     ]
   },
@@ -1863,30 +1760,28 @@
     "steps": [
       {
         "user": "Как стать участником?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "1. Свяжитесь с организатором: ООО «Агрос Экспо Групп», Тел.: +7 (495) 128 29 59, e‑mail: agravia@agros-expo.com.\n2. Уточните условия участия и получите форму заявки.\n3. Заполните заявку и отправьте её организатору.\nЕсли нужна более подробная информация, дайте знать.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
         "clarify": false,
         "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 3.0
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       },
       {
         "user": "А куда заявку отправлять?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
-        "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "reply": "В данных нет конкретного адреса или ссылки для отправки заявки. Свяжитесь с организатором по телефону +7 (495) 128 29 59 или по e‑mail agravia@agros-expo.com, чтобы уточнить, куда именно отправлять форму.\n\nХотите, передам вашу заявку менеджеру?",
+        "intent": "participation",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": true,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['contact', 'participation']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['495', 'agros', 'организатор']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 79,
@@ -1898,28 +1793,28 @@
     "steps": [
       {
         "user": "Где программа?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "В разделе «Деловая программа».",
+        "intent": "business_program",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 1.1
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.0,
+        "errors": []
       },
       {
         "user": "А на второй день что будет?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "В данных нет расписания по дням. Можно узнать подробнее о деловой программе.",
+        "intent": "business_program",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 1.1,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['business_program']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 80,
@@ -1931,30 +1826,28 @@
     "steps": [
       {
         "user": "Я застройщик",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Хорошо, вы застройщик. Могу помочь с монтажом, допуском на площадку и пропусками.",
+        "intent": "role_only",
+        "role": "builder",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 0.7,
+        "errors": []
       },
       {
         "user": "Когда можно заходить на площадку?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
-        "role": null,
-        "clarify": true,
+        "reply": "Заход на площадку возможен в соответствии с графиком монтажа: 16 января – только залы 17 и 18, 14:00–19:00; 17–18 января – 08:00–19:00; 19 января – 08:00–19:00, заезд и регистрация 10:00–16:00, к 15:30 всё оборудование распаковано, к 16:00 стенды готовы. После 19:30–20:00 павильон ставится под охрану. Если нужна точная дата и время для вашего стенда, уточните, пожалуйста.",
+        "intent": "entry",
+        "role": "builder",
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.5
+        "confidence": "HIGH",
+        "sec": 1.7,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['entry', 'montage']",
-      "вместо ответа задан уточняющий вопрос",
-      "нет ни одного из: ['январ']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 81,
@@ -1967,37 +1860,39 @@
     "steps": [
       {
         "user": "Я экспонент",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Хорошо, вы экспонент. Могу помочь с монтажом и заездом, пропусками, ввозом оборудования, личным кабинетом.",
+        "intent": "role_only",
+        "role": "exhibitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 0.9,
+        "errors": []
       },
       {
         "user": "Когда монтаж?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "Монтаж: 16 января – только залы 17 и 18, 14:00–19:00; 17–18 января – 08:00–19:00; 19 января – 08:00–19:00, заезд и регистрация 10:00–16:00, к 15:30 всё оборудование распаковано, к 16:00 стенды готовы. Если нужна уточнение – дайте знать.",
+        "intent": "montage",
+        "role": "exhibitor",
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.5
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.1,
+        "errors": []
       },
       {
         "user": "А оборудование когда завозить?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
-        "role": null,
+        "reply": "В моих данных нет подтверждённой информации по этому вопросу. Могу передать его менеджеру — он свяжется с вами.",
+        "intent": "equipment_in",
+        "role": "exhibitor",
         "clarify": false,
         "offer_manager": true,
         "confidence": "LOW",
-        "sec": 0.5
+        "sec": 1.6,
+        "errors": []
       }
     ],
     "auto_issues": [
-      "intent=error, ожидался один из ['entry', 'equipment_in', 'montage']",
       "нет ни одного из: ['январ']"
     ]
   },
@@ -2010,19 +1905,17 @@
     "steps": [
       {
         "user": "Расскажи анекдот",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Это вне моей темы — я помогаю по вопросам выставки AGRAVIA 2027: даты и место, билеты и регистрация, участие и стенды, монтаж и заезд, деловая программа. С чем помочь?",
+        "intent": "offtopic",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 0.7,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['offtopic']",
-      "нет ни одного из: ['agravia']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 83,
@@ -2033,18 +1926,17 @@
     "steps": [
       {
         "user": "Какая погода будет на выставке?",
-        "reply": "Сейчас я не могу ответить на этот вопрос. Оставьте, пожалуйста, контакт — менеджер свяжется с вами.",
-        "intent": "error",
+        "reply": "Это вне моей темы — я помогаю по вопросам выставки AGRAVIA 2027: даты и место, билеты и регистрация, участие и стенды, монтаж и заезд, деловая программа. С чем помочь?",
+        "intent": "offtopic",
         "role": null,
         "clarify": false,
-        "offer_manager": true,
-        "confidence": "LOW",
-        "sec": 0.4
+        "offer_manager": false,
+        "confidence": "HIGH",
+        "sec": 1.2,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=error, ожидался один из ['offtopic', 'other']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 84,
@@ -2055,19 +1947,17 @@
     "steps": [
       {
         "user": "Кто выиграет чемпионат мира?",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Это вне моей темы — я помогаю по вопросам выставки AGRAVIA 2027: даты и место, билеты и регистрация, участие и стенды, монтаж и заезд, деловая программа. С чем помочь?",
+        "intent": "offtopic",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.4
+        "confidence": "HIGH",
+        "sec": 0.7,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['offtopic']",
-      "нет ни одного из: ['agravia']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 85,
@@ -2078,19 +1968,17 @@
     "steps": [
       {
         "user": "Привет",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Здравствуйте! Я помощник AGRAVIA. Помогу с посещением выставки, участием, монтажом и логистикой, деловой программой. Что вас интересует?",
+        "intent": "greeting",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
-        "confidence": "MEDIUM",
-        "sec": 0.5
+        "confidence": "HIGH",
+        "sec": 0.7,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['greeting']",
-      "нет ни одного из: ['помощник', 'agravia']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 86,
@@ -2101,18 +1989,17 @@
     "steps": [
       {
         "user": "Помоги",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Подскажите, что вам нужно: прийти на выставку как посетитель, участвовать как экспонент, монтаж и заезд или деловая программа?",
+        "intent": "help",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.3
+        "sec": 0.6,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['help']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 87,
@@ -2123,18 +2010,17 @@
     "steps": [
       {
         "user": "Ничего не понимаю, куда мне нажать",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Подскажите, что вам нужно: прийти на выставку как посетитель, участвовать как экспонент, монтаж и заезд или деловая программа?",
+        "intent": "help",
         "role": null,
         "clarify": true,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.7
+        "sec": 0.9,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['help']"
-    ]
+    "auto_issues": []
   },
   {
     "n": 88,
@@ -2145,18 +2031,16 @@
     "steps": [
       {
         "user": "asdfgh",
-        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии в ней, о монтаже и заезде или о деловой программе?",
-        "intent": "other",
+        "reply": "Не поняла запрос. Попробуйте переформулировать — например, про даты, билеты, участие или монтаж.",
+        "intent": "gibberish",
         "role": null,
-        "clarify": true,
+        "clarify": false,
         "offer_manager": false,
         "confidence": "MEDIUM",
-        "sec": 0.4
+        "sec": 0.7,
+        "errors": []
       }
     ],
-    "auto_issues": [
-      "intent=other, ожидался один из ['gibberish']",
-      "нет ни одного из: ['переформул']"
-    ]
+    "auto_issues": []
   }
 ]

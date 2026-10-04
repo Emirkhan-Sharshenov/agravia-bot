@@ -169,7 +169,7 @@ def run_case(client: httpx.Client, turns: list[str]) -> list[dict]:
 def auto_check(case, steps) -> list[str]:
     _, _, _, intents, action, must_all, must_any, must_not = case
     last = steps[-1]
-    reply = last["reply"].lower()
+    reply = last["reply"].lower().replace(" ", " ").replace(" ", " ")
     issues = []
     if last["intent"] not in intents:
         issues.append(f"intent={last['intent']}, ожидался один из {sorted(intents)}")
