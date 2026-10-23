@@ -63,6 +63,8 @@ ANSWER_SYSTEM_TEMPLATE = """Ты — Алиса, помощник выставк
    но нельзя придумывать то, чего нет в блоках, особенно: {forbidden_invention}.
    Не добавляй шагов, действий, логинов и паролей, форм и процедур, которых нет
    в данных; нумеруй шаги только если они прямо описаны в данных.
+   Не делай выводов "как обычно/как правило/лучше/рекомендуется" и не
+   подставляй типичную практику выставок — только то, что прямо написано.
 2. Если данных на сам вопрос нет, но есть соседние — скажи прямо, чего именно
    нет (например, что расписания по дням нет или не указано, где найти
    ссылку), и дай то, что есть. Адрес сайта из данных (например agravia.org) —
@@ -256,17 +258,27 @@ def _retry_on_rate_limit(post, resp: httpx.Response) -> httpx.Response:
     return resp
 
 
+# Модель для ответа по фактам может быть сильнее, чем для классификации
+# (у каждой модели Groq свой лимит токенов, так нагрузка ещё и делится).
+# Если выбранная модель недоступна на ключе — один раз откатываемся на основную.
+_answer_model_unavailable = False
+
+
 def _groq_chat(
-    system: str, messages: list[dict], max_tokens: int, temperature: float, effort: str | None = None
+    system: str, messages: list[dict], max_tokens: int, temperature: float,
+    effort: str | None = None, model: str | None = None,
 ) -> str:
-    global _groq_reasoning_effort_supported
+    global _groq_reasoning_effort_supported, _answer_model_unavailable
+    if model and _answer_model_unavailable:
+        model = None
     api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
         raise RuntimeError("GROQ_API_KEY не задан в переменных окружения")
     # llama-3.1-8b-instant / llama-3.3-70b-versatile стали Enterprise-only на
     # обычных ключах (404 model_not_found); openai/gpt-oss-20b доступна на
     # обычном тарифе (список: https://console.groq.com/docs/models).
-    model = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
+    model = model or os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
+    requested_override = model != os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
 
     def _post(with_effort: bool) -> httpx.Response:
         payload = {
@@ -292,6 +304,9 @@ def _groq_chat(
         _groq_reasoning_effort_supported = False
         resp = _post(False)
     resp = _retry_on_rate_limit(lambda: _post(_groq_reasoning_effort_supported), resp)
+    if resp.status_code in (403, 404) and requested_override and "model" in resp.text.lower():
+        _answer_model_unavailable = True
+        return _groq_chat(system, messages, max_tokens, temperature, effort, model=None)
     if resp.status_code >= 400:
         # raise_for_status() теряет тело ответа, а причина (например
         # model_not_found) лежит именно в нём.
@@ -367,14 +382,14 @@ def _anthropic_chat(system: str, messages: list[dict], max_tokens: int, temperat
 
 def complete(
     system: str, messages: list[dict], max_tokens: int = 600, temperature: float = 0.2,
-    effort: str | None = None,
+    effort: str | None = None, model: str | None = None,
 ) -> str:
     """Один вызов LLM выбранного провайдера: системный промпт + сообщения -> текст.
     effort — глубина рассуждений reasoning-модели (low/medium/high), если провайдер
     её поддерживает: для классификации хватает low, для ответа по фактам нужен выше."""
     provider = os.environ.get("LLM_PROVIDER", "groq").lower()
     if provider == "groq":
-        return _groq_chat(system, messages, max_tokens, temperature, effort)
+        return _groq_chat(system, messages, max_tokens, temperature, effort, model)
     if provider == "gigachat":
         return _gigachat().chat(system, messages, max_tokens, temperature)
     if provider in ("openai_compatible", "yandex"):
@@ -403,11 +418,12 @@ def answer(
     # Ответ по фактам требует внимательного чтения блоков (на low модель
     # пропускала ответ, лежащий одной фразой в длинном блоке) — рассуждаем глубже.
     effort = os.environ.get("GROQ_ANSWER_REASONING_EFFORT", "medium")
-    text = complete(system, messages, max_tokens=900, temperature=0.2, effort=effort)
+    answer_model = os.environ.get("GROQ_ANSWER_MODEL", "openai/gpt-oss-120b")
+    text = complete(system, messages, max_tokens=900, temperature=0.2, effort=effort, model=answer_model)
     if not text:
         # Пустой content — весь бюджет токенов ушёл на скрытые рассуждения, а не
         # "по теме ничего нет": повторяем с минимальными рассуждениями.
-        text = complete(system, messages, max_tokens=700, temperature=0.2, effort="low")
+        text = complete(system, messages, max_tokens=700, temperature=0.2, effort="low", model=answer_model)
     if not text or NO_MATCH_MARKER in text:
         return None
     return text
