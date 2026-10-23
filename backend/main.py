@@ -127,10 +127,13 @@ def chat(req: ChatRequest):
 async def handoff(req: HandoffRequest):
     # Раздел 14 ТЗ: форма обратной связи отделена от AI-контура — контактные
     # данные уходят напрямую менеджеру/в лог, а не в языковую модель.
+    if not req.name.strip() or not req.contact.strip():
+        raise HTTPException(422, "Укажите имя и телефон или e-mail")
     analytics.log_handoff_opened(req.session_id)
     ok = await send_to_manager(req.session_id, req.segment, req.name, req.contact, req.question)
     if not ok:
-        raise HTTPException(502, "Не удалось передать заявку менеджеру, но она сохранена в логе")
+        # Не доставлено ни по одному каналу — виджет не должен писать "Отправлено".
+        raise HTTPException(502, "Не удалось передать заявку менеджеру")
     return {"ok": True}
 
 

@@ -21,6 +21,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+import os
+
 import analytics
 import kb_store
 import llm
@@ -56,6 +58,10 @@ GIBBERISH_REPLY = (
 TOPIC_CLARIFY_REPLY = (
     "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении "
     "выставки, об участии в ней, о монтаже и заезде или о деловой программе?"
+)
+PROVIDER_DOWN_REPLY = (
+    "Сейчас я работаю с ограничениями и не смогла разобрать вопрос. Попробуйте задать "
+    "его ещё раз чуть позже или оставьте контакт — менеджер ответит."
 )
 ROLE_QUESTIONS = {
     "pass": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
@@ -122,6 +128,10 @@ _DIRECT_TOPICS = {
 }
 
 MAX_CANDIDATES = 6
+# Без модели ответ берём дословно из базы только при почти точном совпадении
+# (иначе fuzzy легко подсовывает соседний, но неверный факт — например "адрес"
+# превращается в даты). При слабом совпадении честно говорим про ограничения.
+DEGRADED_MIN_SCORE = float(os.environ.get("DEGRADED_MIN_SCORE", "0.9"))
 MAX_HISTORY = 8
 
 
@@ -223,13 +233,16 @@ def handle_message(
     state = normalize_state(state, segment_hint)
 
     notes: list[str] = []
+    degraded = False
     try:
         route = router.classify(message, history, state)
         intent, role = route.intent, route.role or state["role"]
     except Exception as exc:
-        # Классификатор недоступен/ответил нечитаемо — не падаем: ведём как
-        # обычный вопрос по базе с ранее известной ролью.
+        # Модель недоступна (лимит провайдера, сеть, нечитаемый ответ) — не
+        # падаем и не просим "уточнить" вслепую: ищем по базе без LLM и
+        # отдаём подтверждённый факт как есть (см. _from_kb).
         intent, role = "other", state["role"]
+        degraded = True
         notes.append(f"router: {exc!r}"[:500])
 
     pending = state["pending"]
@@ -238,13 +251,13 @@ def handle_message(
     if pending and intent == "role_only":
         intent = pending["intent"]
 
-    out = _route(session_id, message, history, state, intent, role)
-    out.notes = notes + out.notes
+    out = _route(session_id, message, history, state, intent, role, degraded, notes)
+    out.notes = notes
     _log(session_id, out, message)
     return out
 
 
-def _route(session_id, message, history, state, intent, role) -> EngineResult:
+def _route(session_id, message, history, state, intent, role, degraded, notes) -> EngineResult:
     pending = state["pending"]
     new_state = {"role": role, "intent": intent, "pending": None}
 
@@ -272,7 +285,12 @@ def _route(session_id, message, history, state, intent, role) -> EngineResult:
     if intent == "other":
         segments = segments_for_role(role)
         candidates, low = retrieval.rank(message, history, segments=segments)
-        if not candidates or candidates[0].score < low:
+        if not candidates or candidates[0].score < (max(low, DEGRADED_MIN_SCORE) if degraded else low):
+            if degraded:  # без модели не поняли — не гоняем пользователя по кругу уточнений
+                return _result(
+                    PROVIDER_DOWN_REPLY, intent, role, "LOW", state=new_state,
+                    fallback=True, offer_manager=True,
+                )
             if pending:  # уже уточняли — честно говорим, что данных нет
                 return _no_data(intent, role, new_state)
             new_state["pending"] = {"kind": "topic", "intent": intent}
@@ -287,19 +305,40 @@ def _route(session_id, message, history, state, intent, role) -> EngineResult:
         candidates, _ = retrieval.rank(message, history, items=items)
 
     candidates = candidates[:MAX_CANDIDATES]
-    answer = llm.answer(role, message, candidates, history, INTENT_HINTS.get(intent, ""))
+    if degraded:
+        return _from_kb(candidates, message, intent, role, new_state)
+    try:
+        answer = llm.answer(role, message, candidates, history, INTENT_HINTS.get(intent, ""))
+    except Exception as exc:
+        notes.append(f"answer: {exc!r}"[:500])
+        return _from_kb(candidates, message, intent, role, new_state)
     if answer is None:
         return _no_data(intent, role, new_state)
+    return _answer_result(answer, message, intent, role, new_state)
 
-    reply = clean_markdown(answer)
+
+def _answer_result(text, message, intent, role, state) -> EngineResult:
+    reply = clean_markdown(text)
     if "подробн" not in message.lower():  # просьба о деталях снимает ограничение длины
         reply = shorten(reply)
     suffix = OFFER_MANAGER_SUFFIX.get(intent)
     if suffix:
         reply = f"{reply}\n\n{suffix}"
     return _result(
-        reply, intent, role, "HIGH", state=new_state, matched=True, offer_manager=bool(suffix)
+        reply, intent, role, "HIGH", state=state, matched=True, offer_manager=bool(suffix)
     )
+
+
+def _from_kb(candidates, message, intent, role, state) -> EngineResult:
+    """Режим без модели: самый близкий подтверждённый факт базы дословно.
+    Ничего не выдумываем и не оставляем пользователя без ответа, если
+    провайдер LLM временно недоступен."""
+    if not candidates:
+        return _result(
+            PROVIDER_DOWN_REPLY, intent, role, "LOW", state=state,
+            fallback=True, offer_manager=True,
+        )
+    return _answer_result(candidates[0].answer, message, intent, role, state)
 
 
 def _no_data(intent, role, state) -> EngineResult:

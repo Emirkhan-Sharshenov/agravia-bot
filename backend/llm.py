@@ -16,6 +16,9 @@
     сертификат НУЦ Минцифры (см. README). Также единственный отдаёт
     embeddings для семантического поиска (embed_texts) — независимо от
     выбранного LLM_PROVIDER.
+  - "openai_compatible" (синоним "yandex") — любой OpenAI-совместимый API,
+    в т.ч. Yandex AI Studio: только настройками LLM_BASE_URL / LLM_API_KEY /
+    LLM_MODEL (см. раздел ниже), без правок кода.
   - "anthropic" — Claude API, платный; как и Groq, требует отдельного
     согласования перед production (раздел 13.3 ТЗ).
 
@@ -228,6 +231,22 @@ def _retry_delay(resp: httpx.Response) -> float | None:
     return (value / 1000 if match.group(2) == "ms" else value) + 0.3
 
 
+def _retry_on_rate_limit(post, resp: httpx.Response) -> httpx.Response:
+    """Лимит токенов в минуту (на бесплатном тарифе Groq он невелик): в тексте
+    ошибки есть "try again in X s" — если ждать недолго, ждём и повторяем, а не
+    отдаём пользователю ошибку. Общий бюджет ожидания ограничен, чтобы
+    уложиться в таймаут serverless-функции."""
+    waited = 0.0
+    while resp.status_code == 429 and waited < RATE_LIMIT_MAX_WAIT:
+        delay = _retry_delay(resp)
+        if delay is None or waited + delay > RATE_LIMIT_MAX_WAIT:
+            break
+        time.sleep(delay)
+        waited += delay
+        resp = post()
+    return resp
+
+
 def _groq_chat(
     system: str, messages: list[dict], max_tokens: int, temperature: float, effort: str | None = None
 ) -> str:
@@ -263,22 +282,58 @@ def _groq_chat(
     if resp.status_code == 400 and _groq_reasoning_effort_supported and "reasoning" in resp.text.lower():
         _groq_reasoning_effort_supported = False
         resp = _post(False)
-    # Лимит токенов в минуту (на бесплатном тарифе Groq он невелик): в тексте
-    # ошибки есть "try again in X s" — если ждать недолго, ждём и повторяем,
-    # а не отдаём пользователю ошибку. Общий бюджет ожидания ограничен, чтобы
-    # уложиться в таймаут serverless-функции.
-    waited = 0.0
-    while resp.status_code == 429 and waited < RATE_LIMIT_MAX_WAIT:
-        delay = _retry_delay(resp)
-        if delay is None or waited + delay > RATE_LIMIT_MAX_WAIT:
-            break
-        time.sleep(delay)
-        waited += delay
-        resp = _post(_groq_reasoning_effort_supported)
+    resp = _retry_on_rate_limit(lambda: _post(_groq_reasoning_effort_supported), resp)
     if resp.status_code >= 400:
         # raise_for_status() теряет тело ответа, а причина (например
         # model_not_found) лежит именно в нём.
         raise RuntimeError(f"Groq API error {resp.status_code}: {resp.text}")
+    return (resp.json()["choices"][0]["message"].get("content") or "").strip()
+
+
+# ---------------------------------------------------------------------
+# Любой OpenAI-совместимый API (Yandex AI Studio и др.) — только настройками
+# ---------------------------------------------------------------------
+# Чтобы подключить другую модель, правка кода не нужна — задайте переменные:
+#   LLM_PROVIDER=openai_compatible
+#   LLM_BASE_URL   — например https://llm.api.cloud.yandex.net/v1 (Yandex AI Studio)
+#   LLM_API_KEY    — ключ сервисного аккаунта/API-ключ
+#   LLM_MODEL      — идентификатор модели из консоли провайдера
+#                    (для Yandex это URI вида gpt://<folder_id>/<модель>/latest)
+#   LLM_AUTH_SCHEME — Bearer (по умолчанию) или Api-Key (так принято у Yandex Cloud)
+#   LLM_FOLDER_ID   — если провайдеру нужен заголовок x-folder-id (Yandex Cloud)
+# Остальная логика (router.py, chat_engine.py, база знаний, виджет) от выбора
+# модели не зависит: наружу провайдеры отдают только complete().
+
+def _compat_chat(system: str, messages: list[dict], max_tokens: int, temperature: float) -> str:
+    base = os.environ.get("LLM_BASE_URL", "").rstrip("/")
+    key = os.environ.get("LLM_API_KEY", "")
+    model = os.environ.get("LLM_MODEL", "")
+    if not (base and key and model):
+        raise RuntimeError("Для openai_compatible нужны LLM_BASE_URL, LLM_API_KEY и LLM_MODEL")
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"{os.environ.get('LLM_AUTH_SCHEME', 'Bearer')} {key}",
+    }
+    folder = os.environ.get("LLM_FOLDER_ID")
+    if folder:
+        headers["x-folder-id"] = folder
+
+    def _post() -> httpx.Response:
+        return httpx.post(
+            f"{base}/chat/completions",
+            headers=headers,
+            json={
+                "model": model,
+                "messages": [{"role": "system", "content": system}] + messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+            },
+            timeout=25,
+        )
+
+    resp = _retry_on_rate_limit(_post, _post())
+    if resp.status_code >= 400:
+        raise RuntimeError(f"LLM API error {resp.status_code}: {resp.text}")
     return (resp.json()["choices"][0]["message"].get("content") or "").strip()
 
 
@@ -313,10 +368,12 @@ def complete(
         return _groq_chat(system, messages, max_tokens, temperature, effort)
     if provider == "gigachat":
         return _gigachat().chat(system, messages, max_tokens, temperature)
+    if provider in ("openai_compatible", "yandex"):
+        return _compat_chat(system, messages, max_tokens, temperature)
     if provider == "anthropic":
         return _anthropic_chat(system, messages, max_tokens, temperature)
     raise RuntimeError(
-        f"Неизвестный LLM_PROVIDER: {provider!r} (ожидается 'groq', 'gigachat' или 'anthropic')"
+        f"Неизвестный LLM_PROVIDER: {provider!r} (ожидается 'groq', 'gigachat', 'openai_compatible' или 'anthropic')"
     )
 
 

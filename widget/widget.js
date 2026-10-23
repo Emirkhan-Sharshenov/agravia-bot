@@ -173,12 +173,21 @@
       "<button>Отправить менеджеру</button>";
     body.appendChild(form);
     scrollDown();
-    form.querySelector("button").onclick = function () {
+    var btn = form.querySelector("button");
+    btn.onclick = function () {
       var name = form.querySelector(".agv-name").value.trim();
       var contact = form.querySelector(".agv-contact").value.trim();
       if (!name || !contact) return;
-      form.remove();
-      sendHandoff(name, contact, question);
+      btn.disabled = true;
+      btn.textContent = "Отправляем…";
+      // Форма остаётся на экране, пока сервер не подтвердил доставку: при
+      // ошибке введённые данные не пропадают и можно повторить.
+      sendHandoff(name, contact, question, function () {
+        form.remove();
+      }, function () {
+        btn.disabled = false;
+        btn.textContent = "Отправить менеджеру";
+      });
     };
   }
 
@@ -201,7 +210,7 @@
     ]);
   }
 
-  function sendHandoff(name, contact, question) {
+  function sendHandoff(name, contact, question, onSuccess, onFail) {
     fetch(API_BASE + "/handoff", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -213,11 +222,18 @@
         question: question,
       }),
     })
-      .then(function () {
+      .then(function (r) {
+        // "Отправлено" — только если сервер подтвердил доставку (HTTP 2xx).
+        if (!r.ok) throw new Error("handoff failed: " + r.status);
+        onSuccess();
         addMessage("Спасибо! Менеджер свяжется с вами в ближайшее время.", "bot");
       })
       .catch(function () {
-        addMessage("Не удалось отправить заявку. Попробуйте написать нам напрямую.", "bot");
+        onFail();
+        addMessage(
+          "Не удалось отправить заявку — попробуйте ещё раз чуть позже или свяжитесь с организатором напрямую: +7 (495) 128 29 59.",
+          "bot"
+        );
       });
   }
 
