@@ -132,6 +132,9 @@ MAX_CANDIDATES = 6
 # (иначе fuzzy легко подсовывает соседний, но неверный факт — например "адрес"
 # превращается в даты). При слабом совпадении честно говорим про ограничения.
 DEGRADED_MIN_SCORE = float(os.environ.get("DEGRADED_MIN_SCORE", "0.9"))
+# Внутри уже определённой темы порог мягче, но слабое совпадение всё равно
+# не отдаём: соседний факт по теме хуже честного "работаю с ограничениями".
+DEGRADED_TOPIC_MIN_SCORE = float(os.environ.get("DEGRADED_TOPIC_MIN_SCORE", "0.7"))
 MAX_HISTORY = 8
 
 
@@ -245,6 +248,11 @@ def handle_message(
         degraded = True
         notes.append(f"router: {exc!r}"[:500])
 
+    if role is None and intent in router.ROLE_DEPENDENT:
+        # Страховка: тип пропуска/бейджа или роль названы словом в самом
+        # сообщении, а LLM на низких рассуждениях это пропустила.
+        role = router.role_from_words(message)
+
     pending = state["pending"]
     # Ответ на наш уточняющий вопрос ("Я экспонент") — это ответ по ТОЙ же
     # теме, о которой спрашивали, а не новая тема role_only.
@@ -312,6 +320,17 @@ def _route(session_id, message, history, state, intent, role, degraded, notes) -
     except Exception as exc:
         notes.append(f"answer: {exc!r}"[:500])
         return _from_kb(candidates, message, intent, role, new_state)
+    if answer is None and intent != "other":
+        # Тема определена и факты отобраны по ней: "данных нет" здесь почти
+        # всегда лишняя осторожность модели. Повторяем с запретом NO_MATCH —
+        # пусть скажет, чего именно нет, и даст ближайшее из данных.
+        try:
+            answer = llm.answer(
+                role, message, candidates, history, INTENT_HINTS.get(intent, ""), allow_no_match=False
+            )
+        except Exception as exc:
+            notes.append(f"answer-retry: {exc!r}"[:500])
+            return _from_kb(candidates, message, intent, role, new_state)
     if answer is None:
         return _no_data(intent, role, new_state)
     return _answer_result(answer, message, intent, role, new_state)
@@ -333,7 +352,7 @@ def _from_kb(candidates, message, intent, role, state) -> EngineResult:
     """Режим без модели: самый близкий подтверждённый факт базы дословно.
     Ничего не выдумываем и не оставляем пользователя без ответа, если
     провайдер LLM временно недоступен."""
-    if not candidates:
+    if not candidates or candidates[0].score < DEGRADED_TOPIC_MIN_SCORE:
         return _result(
             PROVIDER_DOWN_REPLY, intent, role, "LOW", state=state,
             fallback=True, offer_manager=True,
