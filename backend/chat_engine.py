@@ -243,6 +243,9 @@ def handle_message(
         )
 
     intent = route.intent
+    if intent != "secrets" and router.mentions_secret(message):
+        # безопасность важнее классификации: пароль/код из СМС в сообщении -> предупреждение
+        intent = "secrets"
     if route.for_other:
         # вопрос "за коллегу": роль этого человека действует только в этом ответе,
         # роль автора диалога не меняется

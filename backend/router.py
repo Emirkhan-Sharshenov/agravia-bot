@@ -163,6 +163,13 @@ _FALLBACK_RULES = (
 )
 
 
+_SECRET_RE = re.compile(r"парол|password|код\w* из (смс|sms|сообщен)|cvv|пин-?код", re.I)
+
+
+def mentions_secret(message: str) -> bool:
+    return bool(_SECRET_RE.search(message))
+
+
 def fallback_classify(message: str) -> Route | None:
     for intent, pattern in _FALLBACK_RULES:
         if pattern.search(message):
