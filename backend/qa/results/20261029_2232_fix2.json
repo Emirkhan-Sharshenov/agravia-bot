@@ -1,0 +1,50 @@
+[
+  {
+    "qa": 150,
+    "turns": [
+      "Где можно поесть, есть кафе?"
+    ],
+    "steps": [
+      {
+        "user": "Где можно поесть, есть кафе?",
+        "reply": "Не получилось обработать запрос. Попробуйте задать его ещё раз или свяжитесь с организатором: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "other",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.9,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198669, Requested 1846. Please try again in 3m42.48s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['2 этаж', '2-м этаж', 'втором этаж']",
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  },
+  {
+    "qa": 153,
+    "turns": [
+      "Можете выдать подтверждение моего посещения для работы?"
+    ],
+    "steps": [
+      {
+        "user": "Можете выдать подтверждение моего посещения для работы?",
+        "reply": "Не получилось обработать запрос. Попробуйте задать его ещё раз или свяжитесь с организатором: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "other",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 24.1,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198550, Requested 1816. Please try again in 2m38.112s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "нет: agravia.org/reg",
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  }
+]

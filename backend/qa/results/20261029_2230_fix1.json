@@ -1,0 +1,362 @@
+[
+  {
+    "qa": 54,
+    "turns": [
+      "Какие документы нужны для ввоза оборудования?"
+    ],
+    "steps": [
+      {
+        "user": "Какие документы нужны для ввоза оборудования?",
+        "reply": "Для ввоза оборудования требуется «Письмо для ввоза и вывоза оборудования и экспонатов» на фирменном бланке компании с подписью и печатью руководителя, с подробным описанием ввозимого оборудования; бланк можно скачать в личном кабинете участника или на сайте Крокус Экспо, письмо визируется штампами Организатора и Сервис-центра, требуется 3 экземпляра.",
+        "intent": "equipment_in",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.7,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 57,
+    "turns": [
+      "Где посмотреть деловую программу?"
+    ],
+    "steps": [
+      {
+        "user": "Где посмотреть деловую программу?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.1,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 58,
+    "turns": [
+      "Какая программа будет на выставке?"
+    ],
+    "steps": [
+      {
+        "user": "Какая программа будет на выставке?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 59,
+    "turns": [
+      "Будут конференции?"
+    ],
+    "steps": [
+      {
+        "user": "Будут конференции?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.5,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 62,
+    "turns": [
+      "Во сколько начинаются мероприятия?"
+    ],
+    "steps": [
+      {
+        "user": "Во сколько начинаются мероприятия?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 79,
+    "turns": [
+      "Где программа?",
+      "А на второй день что будет?"
+    ],
+    "steps": [
+      {
+        "user": "Где программа?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.2,
+        "errors": []
+      },
+      {
+        "user": "А на второй день что будет?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 104,
+    "turns": [
+      "Нужны ветеринарные препараты для КРС"
+    ],
+    "steps": [
+      {
+        "user": "Нужны ветеринарные препараты для КРС",
+        "reply": "По кормам, кормовым добавкам и ветеринарии у AGRAVIA есть раздел Feed & Health: https://agravia.org/feedhealth. Поставщиков можно посмотреть в каталоге участников: https://agravia.org/participants. Решение для своей задачи можно найти и на самой выставке.",
+        "intent": "industry_feed",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.4,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 135,
+    "turns": [
+      "Какие точные часы семинара по КРС 21 января?"
+    ],
+    "steps": [
+      {
+        "user": "Какие точные часы семинара по КРС 21 января?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.7,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 136,
+    "turns": [
+      "147 мероприятий точно будет в 2027?"
+    ],
+    "steps": [
+      {
+        "user": "147 мероприятий точно будет в 2027?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 137,
+    "turns": [
+      "Программа 2027 уже окончательная?"
+    ],
+    "steps": [
+      {
+        "user": "Программа 2027 уже окончательная?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 144,
+    "turns": [
+      "Дайте расписание круглого стола с точными спикерами"
+    ],
+    "steps": [
+      {
+        "user": "Дайте расписание круглого стола с точными спикерами",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 147,
+    "turns": [
+      "Есть доступная среда для коляски?"
+    ],
+    "steps": [
+      {
+        "user": "Есть доступная среда для коляски?",
+        "reply": "У меня нет подтверждённой информации по этому вопросу. Уточнить можно у организатора: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "no_data",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.7,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199018, Requested 1847. Please try again in 6m13.68s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  },
+  {
+    "qa": 150,
+    "turns": [
+      "Где можно поесть, есть кафе?"
+    ],
+    "steps": [
+      {
+        "user": "Где можно поесть, есть кафе?",
+        "reply": "Не получилось обработать запрос. Попробуйте задать его ещё раз или свяжитесь с организатором: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "other",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.6,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198990, Requested 1840. Please try again in 5m58.56s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['2 этаж', '2-м этаж', 'втором этаж']",
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  },
+  {
+    "qa": 153,
+    "turns": [
+      "Можете выдать подтверждение моего посещения для работы?"
+    ],
+    "steps": [
+      {
+        "user": "Можете выдать подтверждение моего посещения для работы?",
+        "reply": "Не получилось обработать запрос. Попробуйте задать его ещё раз или свяжитесь с организатором: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "other",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.6,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198956, Requested 1816. Please try again in 5m33.504s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "нет: agravia.org/reg",
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  },
+  {
+    "qa": 160,
+    "turns": [
+      "Есть бесплатная реклама участника на сайте?"
+    ],
+    "steps": [
+      {
+        "user": "Есть бесплатная реклама участника на сайте?",
+        "reply": "У меня нет подтверждённой информации по этому вопросу. Уточнить можно у организатора: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "no_data",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.5,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198922, Requested 1814. Please try again in 5m17.952s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  },
+  {
+    "qa": 168,
+    "turns": [
+      "Я из Узбекистана, смогу зарегистрироваться?"
+    ],
+    "steps": [
+      {
+        "user": "Я из Узбекистана, смогу зарегистрироваться?",
+        "reply": "Для посещения AGRAVIA зарегистрируйтесь бесплатно: https://agravia.org/reg. Электронный билет можно сохранить на телефоне — распечатывать необязательно.",
+        "intent": "visitor_registration",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.6,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198888, Requested 2047. Please try again in 6m43.92s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  },
+  {
+    "qa": 196,
+    "turns": [
+      "У меня не получается билет, сейчас напишу пароль от почты"
+    ],
+    "steps": [
+      {
+        "user": "У меня не получается билет, сейчас напишу пароль от почты",
+        "reply": "Не присылайте пароль, коды и другие секреты. Если не получается получить билет, зарегистрируйтесь здесь: https://agravia.org/reg или обратитесь в поддержку регистрации: agravia@expodat.com.",
+        "intent": "secrets",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.5,
+        "errors": [
+          "router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01kkckf3xjfvg85zb66yds2hnf` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198854, Requested 2049. Please try again in 6m30.096s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\\n')"
+        ]
+      }
+    ],
+    "auto_issues": [
+      "ошибка провайдера: router: RuntimeError('Groq API error 429: {\"error\":{\"message\":\"Rate limit reache"
+    ]
+  }
+]
