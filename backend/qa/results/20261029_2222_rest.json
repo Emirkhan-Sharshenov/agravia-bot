@@ -1,0 +1,1227 @@
+[
+  {
+    "qa": 1,
+    "turns": [
+      "Когда выставка?"
+    ],
+    "steps": [
+      {
+        "user": "Когда выставка?",
+        "reply": "AGRAVIA 2027 пройдёт 20–22 января 2027 года в МВЦ «Крокус Экспо», павильон 3. Часы работы: 20 и 21 января — 09:00–18:00, 22 января — 09:00–16:00.",
+        "intent": "dates",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.2,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 7,
+    "turns": [
+      "Где проходит выставка?"
+    ],
+    "steps": [
+      {
+        "user": "Где проходит выставка?",
+        "reply": "МВЦ «Крокус Экспо», павильон 3 (1 и 3 этажи); залы 17 и 18 находятся на 3-м этаже. Адрес: Московская область, г. Красногорск, ул. Международная, д. 20.",
+        "intent": "location",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 38,
+    "turns": [
+      "Нужен монтажный пропуск"
+    ],
+    "steps": [
+      {
+        "user": "Нужен монтажный пропуск",
+        "reply": "Нет, если у всех сотрудников на монтаже/демонтаже есть бейджи экспонента, отдельные монтажные пропуска не требуются.",
+        "intent": "pass",
+        "role": "builder",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 39,
+    "turns": [
+      "Как получить бейдж экспонента?",
+      "А если я посетитель?"
+    ],
+    "steps": [
+      {
+        "user": "Как получить бейдж экспонента?",
+        "reply": "Бейдж экспонента оформляется через Организатора в личном кабинете участника. Он высылается каждому участнику индивидуально и действует на монтаж, работу и демонтаж.",
+        "intent": "badge",
+        "role": "exhibitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.2,
+        "errors": []
+      },
+      {
+        "user": "А если я посетитель?",
+        "reply": "Для посещения AGRAVIA зарегистрируйтесь бесплатно: https://agravia.org/reg. Электронный билет можно сохранить на телефоне — распечатывать необязательно.",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.3,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 40,
+    "turns": [
+      "Нужен монтажный пропуск",
+      "Нет, я про билет, не про монтаж"
+    ],
+    "steps": [
+      {
+        "user": "Нужен монтажный пропуск",
+        "reply": "Нет, если у всех сотрудников на монтаже/демонтаже есть бейджи экспонента, отдельный монтажный пропуск не требуется.",
+        "intent": "pass",
+        "role": "builder",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.8,
+        "errors": []
+      },
+      {
+        "user": "Нет, я про билет, не про монтаж",
+        "reply": "Билет для посетителей бесплатный, но его нужно оформить онлайн. На сайте agravia.org в разделе «Получить билет» укажите e-mail, перейдите по ссылке из письма, заполните электронную анкету и сохраните полученный e-ticket — он действует на все проекты выставки, включая iAGRI, и покрывает все три дня проведения.\n\nРегистрация: https://agravia.org/reg",
+        "intent": "ticket_info",
+        "role": "builder",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.1,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 47,
+    "turns": [
+      "До скольки можно работать на монтаже?"
+    ],
+    "steps": [
+      {
+        "user": "До скольки можно работать на монтаже?",
+        "reply": "Работы можно вести по графику: 16 янв — 14:00-19:00 (залы 17-18), 17-18 янв — 08:00-19:00, 19 янв — 08:00-19:00, но все основные работы должны быть завершены к 16:00 19 янв; до 19:00 допускаются только мелкие работы. В дни работы выставки монтаж запрещён.",
+        "intent": "montage",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.5,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 51,
+    "turns": [
+      "Когда можно завезти оборудование?"
+    ],
+    "steps": [
+      {
+        "user": "Когда можно завезти оборудование?",
+        "reply": "Оборудование завозится в дни монтажа: 16 января — только залы 17-18, 14:00-19:00; 17-18 января — 08:00-19:00; 19 января — 08:00-19:00. Заезд автомобиля в зону ПРР требует платного пропуска, который оформляется в личном кабинете экспонента.",
+        "intent": "equipment_in",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.1,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 52,
+    "turns": [
+      "Как завезти оборудование на стенд?"
+    ],
+    "steps": [
+      {
+        "user": "Как завезти оборудование на стенд?",
+        "reply": "Оборудование везут только в дни монтажа: 16 янв (залы 17-18 14:00-19:00), 17-18 янв 08:00-19:00, 19 янв 08:00-19:00. Для заезда автомобиля в зону ПРР нужен платный пропуск, который оформляется в Личном кабинете экспонента. Требуется «Письмо для ввоза и вывоза оборудования и экспонатов» на фирменном бланке с подписью, печатью и 3-мя копиями, визированными Организатором и Сервис-центром.",
+        "intent": "equipment_in",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.5,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 53,
+    "turns": [
+      "Когда вывоз оборудования?"
+    ],
+    "steps": [
+      {
+        "user": "Когда вывоз оборудования?",
+        "reply": "Только после закрытия выставки для посетителей, согласно графику в разделе «Расписание работы выставки».",
+        "intent": "equipment_out",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 54,
+    "turns": [
+      "Какие документы нужны для ввоза оборудования?"
+    ],
+    "steps": [
+      {
+        "user": "Какие документы нужны для ввоза оборудования?",
+        "reply": "Требуется «Письмо для ввоза и вывоза оборудования и экспонатов» на фирменном бланке компании с подписью и печатью руководителя, с подробным описанием ввозимого оборудования. Бланк письма можно скачать в личном кабинете участника или на сайте Крокус Экспо. Письмо визируется штампами Организатора и отдела «Сервис-центр»; нужно 3 экземпляра (для сервис-центра, охраны на монтаже и охраны на демонтаже).",
+        "intent": "equipment_in",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['прр', 'пропуск']"
+    ]
+  },
+  {
+    "qa": 68,
+    "turns": [
+      "Как связаться с менеджером?"
+    ],
+    "steps": [
+      {
+        "user": "Как связаться с менеджером?",
+        "reply": "Связаться с организатором можно по телефону +7 (495) 128-29-59; контакты — https://agravia.org/organizer.",
+        "intent": "contact",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.2,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 69,
+    "turns": [
+      "Мне нужен человек, а не бот"
+    ],
+    "steps": [
+      {
+        "user": "Мне нужен человек, а не бот",
+        "reply": "Связаться с организатором можно по телефону +7 (495) 128-29-59; контакты — https://agravia.org/organizer.",
+        "intent": "contact",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.7,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 71,
+    "turns": [
+      "Можно номер менеджера?"
+    ],
+    "steps": [
+      {
+        "user": "Можно номер менеджера?",
+        "reply": "Связаться с организатором можно по телефону +7 (495) 128-29-59; контакты — https://agravia.org/organizer.",
+        "intent": "contact",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 73,
+    "turns": [
+      "Я посетитель",
+      "Как получить пропуск?"
+    ],
+    "steps": [
+      {
+        "user": "Я посетитель",
+        "reply": "Хорошо, вы посетитель. Могу помочь с билетом и регистрацией, как добраться, деловой программой.",
+        "intent": "role_only",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.8,
+        "errors": []
+      },
+      {
+        "user": "Как получить пропуск?",
+        "reply": "Для посещения AGRAVIA зарегистрируйтесь бесплатно: https://agravia.org/reg. Электронный билет можно сохранить на телефоне — распечатывать необязательно.",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 76,
+    "turns": [
+      "Мне нужен пропуск",
+      "Нет, я про билет"
+    ],
+    "steps": [
+      {
+        "user": "Мне нужен пропуск",
+        "reply": "Уточните, пожалуйста: пропуск нужен посетителю, экспоненту или для монтажа/демонтажа?",
+        "intent": "pass",
+        "role": null,
+        "clarify": true,
+        "offer_manager": false,
+        "sec": 1.4,
+        "errors": []
+      },
+      {
+        "user": "Нет, я про билет",
+        "reply": "Получить билет можно бесплатно: зайдите на agravia.org в раздел «Получить билет», укажите e-mail, перейдите по ссылке из письма, заполните электронную анкету и сохраните полученный электронный билет, который будет вашим бейджем для входа.\n\nРегистрация: https://agravia.org/reg",
+        "intent": "ticket_info",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.7,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 78,
+    "turns": [
+      "Как стать участником?",
+      "А куда заявку отправлять?"
+    ],
+    "steps": [
+      {
+        "user": "Как стать участником?",
+        "reply": "Чтобы участвовать со стендом, заполните заявку: https://agravia.org/book1. После отправки с вами свяжется менеджер, уточнит задачу и предложит подходящие условия. Стоимость зависит от формата участия и рассчитывается индивидуально.",
+        "intent": "participation",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.1,
+        "errors": []
+      },
+      {
+        "user": "А куда заявку отправлять?",
+        "reply": "Чтобы участвовать со стендом, заполните заявку: https://agravia.org/book1. После отправки с вами свяжется менеджер, уточнит задачу и предложит подходящие условия. Стоимость зависит от формата участия и рассчитывается индивидуально.",
+        "intent": "participation",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 79,
+    "turns": [
+      "Где программа?",
+      "А на второй день что будет?"
+    ],
+    "steps": [
+      {
+        "user": "Где программа?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.8,
+        "errors": []
+      },
+      {
+        "user": "А на второй день что будет?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.1,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 81,
+    "turns": [
+      "Я экспонент",
+      "Когда монтаж?",
+      "А оборудование когда завозить?"
+    ],
+    "steps": [
+      {
+        "user": "Я экспонент",
+        "reply": "Хорошо, вы экспонент. Могу помочь с монтажом и заездом, пропусками, ввозом оборудования, личным кабинетом.",
+        "intent": "role_only",
+        "role": "exhibitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.1,
+        "errors": []
+      },
+      {
+        "user": "Когда монтаж?",
+        "reply": "Монтаж: 16 янв (залы 17-18 14:00–19:00); 17-18 янв 08:00–19:00; 19 янв 08:00–19:00 (заезд и регистрация 10:00–16:00, к 15:30 оборудование распаковано, к 16:00 завершающая уборка).",
+        "intent": "montage",
+        "role": "exhibitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.1,
+        "errors": []
+      },
+      {
+        "user": "А оборудование когда завозить?",
+        "reply": "Оборудование завозится в дни монтажа: 16 января — только залы 17 и 18, 14:00–19:00; 17–18 января — 08:00–19:00; 19 января — 08:00–19:00. Для заезда автомобиля в зону ПРР нужен платный пропуск, заказываемый в Личном кабинете экспонента.",
+        "intent": "equipment_in",
+        "role": "exhibitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 93,
+    "turns": [
+      "Мне нужны нейросети для сельского хозяйства, куда идти?"
+    ],
+    "steps": [
+      {
+        "user": "Мне нужны нейросети для сельского хозяйства, куда идти?",
+        "reply": "Тема нейросетей и цифровых решений для сельского хозяйства представлена на совместной площадке iAGRI, которая проходит вместе с AGRAVIA. Участников можно посмотреть в каталоге: https://agravia.org/participants. Один билет действует на обе выставки: https://agravia.org/reg.",
+        "intent": "industry_ai",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 96,
+    "turns": [
+      "Я иду только на iAGRI, что делать?"
+    ],
+    "steps": [
+      {
+        "user": "Я иду только на iAGRI, что делать?",
+        "reply": "Для посещения iAGRI зарегистрируйтесь здесь: https://iagri-expo.com/reg. Один билет действует и на AGRAVIA, и на iAGRI.",
+        "intent": "iagri_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.3,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 97,
+    "turns": [
+      "Можно успеть обе выставки за один день?"
+    ],
+    "steps": [
+      {
+        "user": "Можно успеть обе выставки за один день?",
+        "reply": "Один билет даёт доступ к AGRAVIA и iAGRI на все три дня выставки, но не гарантирует, что успеете осмотреть всё за один день. Лучше планировать посещение на несколько дней.",
+        "intent": "general",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.7,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 98,
+    "turns": [
+      "АГРОС теперь не проводится?"
+    ],
+    "steps": [
+      {
+        "user": "АГРОС теперь не проводится?",
+        "reply": "АГРОС объединился с брендом АГРОТЕХ и с 2026 года проходит под единым названием AGRAVIA. Поэтому отдельной выставки «АГРОС» уже нет — её программы включены в AGRAVIA.",
+        "intent": "general",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.6,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 104,
+    "turns": [
+      "Нужны ветеринарные препараты для КРС"
+    ],
+    "steps": [
+      {
+        "user": "Нужны ветеринарные препараты для КРС",
+        "reply": "На AGRAVIA представлены решения для всего цикла АПК: животноводство, корма и ветеринария, растениеводство, картофель, овощи и плоды, переработка. Поставщиков по вашей теме можно найти в каталоге участников: https://agravia.org/participants. Приехать и подобрать решение на месте можно, зарегистрировавшись бесплатно: https://agravia.org/reg.",
+        "intent": "industry_other",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.1,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет: agravia.org/feedhealth"
+    ]
+  },
+  {
+    "qa": 120,
+    "turns": [
+      "Как найти зал 18 в Крокусе?"
+    ],
+    "steps": [
+      {
+        "user": "Как найти зал 18 в Крокусе?",
+        "reply": "Зал 18 находится в МВЦ «Крокус Экспо», павильон 3, на 3-м этаже (залы 17 и 18 расположены именно там). Адрес: Московская область, г. Красногорск, ул. Международная, д. 20.",
+        "intent": "location",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 128,
+    "turns": [
+      "Билет с QR-кодом в телефоне годится?"
+    ],
+    "steps": [
+      {
+        "user": "Билет с QR-кодом в телефоне годится?",
+        "reply": "Да, электронный билет с QR-кодом на телефоне подходит, распечатывать его не нужно.\n\nРегистрация: https://agravia.org/reg",
+        "intent": "ticket_info",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 133,
+    "turns": [
+      "Могу просто прийти без регистрации?"
+    ],
+    "steps": [
+      {
+        "user": "Могу просто прийти без регистрации?",
+        "reply": "Для посещения AGRAVIA зарегистрируйтесь бесплатно: https://agravia.org/reg. Электронный билет можно сохранить на телефоне — распечатывать необязательно.",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.3,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 135,
+    "turns": [
+      "Какие точные часы семинара по КРС 21 января?"
+    ],
+    "steps": [
+      {
+        "user": "Какие точные часы семинара по КРС 21 января?",
+        "reply": "AGRAVIA 2027 пройдёт 20–22 января 2027 года в МВЦ «Крокус Экспо», павильон 3. Часы работы: 20 и 21 января — 09:00–18:00, 22 января — 09:00–16:00.",
+        "intent": "dates",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет: agravia.org/program"
+    ]
+  },
+  {
+    "qa": 136,
+    "turns": [
+      "147 мероприятий точно будет в 2027?"
+    ],
+    "steps": [
+      {
+        "user": "147 мероприятий точно будет в 2027?",
+        "reply": "В данных нет информации о количестве мероприятий в 2027 году.",
+        "intent": "general",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет: agravia.org/program"
+    ]
+  },
+  {
+    "qa": 137,
+    "turns": [
+      "Программа 2027 уже окончательная?"
+    ],
+    "steps": [
+      {
+        "user": "Программа 2027 уже окончательная?",
+        "reply": "В предоставленных данных нет информации о программе выставки 2027 года.",
+        "intent": "general",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.7,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет: agravia.org/program",
+      "нет ни одного из: ['формиру']"
+    ]
+  },
+  {
+    "qa": 138,
+    "turns": [
+      "Можно предложить спикера от нашей компании?"
+    ],
+    "steps": [
+      {
+        "user": "Можно предложить спикера от нашей компании?",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 139,
+    "turns": [
+      "Хочу податься в конкурс Лучший продукт, заявки принимаете сейчас?"
+    ],
+    "steps": [
+      {
+        "user": "Хочу податься в конкурс Лучший продукт, заявки принимаете сейчас?",
+        "reply": "Приём заявок на конкурс «Лучший продукт AGRAVIA 2027» закрыт. Победителей объявят в конце ноября 2026 года — имена будут опубликованы после объявления. Условия и номинанты: https://agravia.org/competition.",
+        "intent": "competition",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 140,
+    "turns": [
+      "Кто уже победил в Лучший продукт AGRAVIA 2027?"
+    ],
+    "steps": [
+      {
+        "user": "Кто уже победил в Лучший продукт AGRAVIA 2027?",
+        "reply": "Приём заявок на конкурс «Лучший продукт AGRAVIA 2027» закрыт. Победителей объявят в конце ноября 2026 года — имена будут опубликованы после объявления. Условия и номинанты: https://agravia.org/competition.",
+        "intent": "competition",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.5,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 141,
+    "turns": [
+      "Когда будут известны итоги конкурса?"
+    ],
+    "steps": [
+      {
+        "user": "Когда будут известны итоги конкурса?",
+        "reply": "Приём заявок на конкурс «Лучший продукт AGRAVIA 2027» закрыт. Победителей объявят в конце ноября 2026 года — имена будут опубликованы после объявления. Условия и номинанты: https://agravia.org/competition.",
+        "intent": "competition",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 142,
+    "turns": [
+      "Где посмотреть номинантов на Лучший продукт?"
+    ],
+    "steps": [
+      {
+        "user": "Где посмотреть номинантов на Лучший продукт?",
+        "reply": "Приём заявок на конкурс «Лучший продукт AGRAVIA 2027» закрыт. Победителей объявят в конце ноября 2026 года — имена будут опубликованы после объявления. Условия и номинанты: https://agravia.org/competition.",
+        "intent": "competition",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.1,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 143,
+    "turns": [
+      "Есть что-то похожее на премию iAGRI?"
+    ],
+    "steps": [
+      {
+        "user": "Есть что-то похожее на премию iAGRI?",
+        "reply": "Премия iAGRI — отдельная награда, не связанная с конкурсом «Лучший продукт AGRAVIA». Подтверждённых условий и страницы премии у меня пока нет — уточните у организатора: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "iagri_award",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 144,
+    "turns": [
+      "Дайте расписание круглого стола с точными спикерами"
+    ],
+    "steps": [
+      {
+        "user": "Дайте расписание круглого стола с точными спикерами",
+        "reply": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры публикуются здесь: https://agravia.org/program.",
+        "intent": "business_program",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.6,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 145,
+    "turns": [
+      "Где припарковаться и сколько стоит парковка?"
+    ],
+    "steps": [
+      {
+        "user": "Где припарковаться и сколько стоит парковка?",
+        "reply": "Да, есть бесплатная парковка перед павильонами МВЦ «Крокус Экспо» и бесплатная подземная парковка под павильоном № 3 (этаж -1), а также платная VIP-парковка рядом с входами. Стоимость VIP-парковки в данных не указана.",
+        "intent": "vehicle_access",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.1,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 147,
+    "turns": [
+      "Есть доступная среда для коляски?"
+    ],
+    "steps": [
+      {
+        "user": "Есть доступная среда для коляски?",
+        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии со стендом, о поиске компании или продукции, о монтаже и заезде или о деловой программе?",
+        "intent": "other",
+        "role": null,
+        "clarify": true,
+        "offer_manager": false,
+        "sec": 2.5,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['128-29-59', 'agravia.org/organizer']"
+    ]
+  },
+  {
+    "qa": 150,
+    "turns": [
+      "Где можно поесть, есть кафе?"
+    ],
+    "steps": [
+      {
+        "user": "Где можно поесть, есть кафе?",
+        "reply": "В данных нет информации о кафе и местах питания на выставке. Подробнее можно посмотреть на сайте agravia.org.",
+        "intent": "general",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.7,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['2 этаж', '2-м этаж', 'втором этаж']"
+    ]
+  },
+  {
+    "qa": 151,
+    "turns": [
+      "Где остановиться рядом, у вас есть гостиницы-партнёры?"
+    ],
+    "steps": [
+      {
+        "user": "Где остановиться рядом, у вас есть гостиницы-партнёры?",
+        "reply": "Проживание и туристические услуги: https://agravia.org/tourist. Контакты: Иван Иванов — +7 926 232 52 92, +7 495 231 3399 доб. 232, ivanovia@cbtc.ru; Екатерина Карманцева — +7 916 972 83 87, +7 495 231 3399 доб. 634, KarmancevaEV@cbtc.ru.",
+        "intent": "tourist",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 152,
+    "turns": [
+      "Я из Казахстана, вы дадите приглашение для визы?"
+    ],
+    "steps": [
+      {
+        "user": "Я из Казахстана, вы дадите приглашение для визы?",
+        "reply": "Туристическое приглашение в РФ оформляет Николай Хоменко: +7 495 231 3399 доб. 501, agravia.invitation@cbtc.ru. Подробнее: https://agravia.org/tourist.",
+        "intent": "tourist_invite",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 153,
+    "turns": [
+      "Можете выдать подтверждение моего посещения для работы?"
+    ],
+    "steps": [
+      {
+        "user": "Можете выдать подтверждение моего посещения для работы?",
+        "reply": "Для посещения AGRAVIA зарегистрируйтесь бесплатно: https://agravia.org/reg. Электронный билет можно сохранить на телефоне — распечатывать необязательно.",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.9,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['печать']"
+    ]
+  },
+  {
+    "qa": 155,
+    "turns": [
+      "Есть готовые баннеры, чтобы пригласить клиентов?"
+    ],
+    "steps": [
+      {
+        "user": "Есть готовые баннеры, чтобы пригласить клиентов?",
+        "reply": "Для приглашения клиентов можно использовать готовые баннеры AGRAVIA: https://agravia.org/banners.",
+        "intent": "banners",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 157,
+    "turns": [
+      "Что за акция «Встречаемся на AGRAVIA»?"
+    ],
+    "steps": [
+      {
+        "user": "Что за акция «Встречаемся на AGRAVIA»?",
+        "reply": "Об акции «Встречаемся на AGRAVIA»: https://agravia.org/content_liga и https://agravia.org/exhibitors-video. Видеоформат можно использовать вместо персональной ссылки, а для клиентов — отдельные UTM-ссылки.",
+        "intent": "promo_campaign",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 158,
+    "turns": [
+      "Можно снять ролик вместо персональной ссылки?"
+    ],
+    "steps": [
+      {
+        "user": "Можно снять ролик вместо персональной ссылки?",
+        "reply": "Об акции «Встречаемся на AGRAVIA»: https://agravia.org/content_liga и https://agravia.org/exhibitors-video. Видеоформат можно использовать вместо персональной ссылки, а для клиентов — отдельные UTM-ссылки.",
+        "intent": "promo_campaign",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 160,
+    "turns": [
+      "Есть бесплатная реклама участника на сайте?"
+    ],
+    "steps": [
+      {
+        "user": "Есть бесплатная реклама участника на сайте?",
+        "reply": "Не уверена, что правильно поняла вопрос. Уточните, пожалуйста: речь о посещении выставки, об участии со стендом, о поиске компании или продукции, о монтаже и заезде или о деловой программе?",
+        "intent": "other",
+        "role": null,
+        "clarify": true,
+        "offer_manager": false,
+        "sec": 1.2,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['организатор']"
+    ]
+  },
+  {
+    "qa": 161,
+    "turns": [
+      "Я СМИ, где пройти аккредитацию?"
+    ],
+    "steps": [
+      {
+        "user": "Я СМИ, где пройти аккредитацию?",
+        "reply": "По аккредитации СМИ обратитесь к организатору: +7 (495) 128-29-59, https://agravia.org/organizer.",
+        "intent": "media",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 162,
+    "turns": [
+      "Можно каждому клиенту дать свою UTM-ссылку?"
+    ],
+    "steps": [
+      {
+        "user": "Можно каждому клиенту дать свою UTM-ссылку?",
+        "reply": "Об акции «Встречаемся на AGRAVIA»: https://agravia.org/content_liga и https://agravia.org/exhibitors-video. Видеоформат можно использовать вместо персональной ссылки, а для клиентов — отдельные UTM-ссылки.",
+        "intent": "promo_campaign",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.2,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 163,
+    "turns": [
+      "When and where is AGRAVIA 2027?"
+    ],
+    "steps": [
+      {
+        "user": "When and where is AGRAVIA 2027?",
+        "reply": "AGRAVIA 2027 will take place on 20–22 January 2027 at Crocus Expo, Pavilion 3. Opening hours: 20–21 January 09:00–18:00, 22 January 09:00–16:00.",
+        "intent": "dates",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 164,
+    "turns": [
+      "How can our company exhibit?"
+    ],
+    "steps": [
+      {
+        "user": "How can our company exhibit?",
+        "reply": "To exhibit with a stand, please fill in the application: https://agravia.org/book1. After you submit it, a manager will contact you, clarify your needs and offer suitable conditions. The price depends on the participation format and is calculated individually.",
+        "intent": "participation",
+        "role": "prospect",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.2,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 165,
+    "turns": [
+      "Please help with the visitor registration in English"
+    ],
+    "steps": [
+      {
+        "user": "Please help with the visitor registration in English",
+        "reply": "To visit AGRAVIA, register for free: https://agravia.org/reg_en. The e-ticket can be saved on your phone — printing is not required.",
+        "intent": "visitor_registration",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 168,
+    "turns": [
+      "Я из Узбекистана, смогу зарегистрироваться?"
+    ],
+    "steps": [
+      {
+        "user": "Я из Узбекистана, смогу зарегистрироваться?",
+        "reply": "Для посещения AGRAVIA зарегистрируйтесь бесплатно: https://agravia.org/reg. Электронный билет можно сохранить на телефоне — распечатывать необязательно.",
+        "intent": "visitor_registration",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": [
+      "нет ни одного из: ['международ']"
+    ]
+  },
+  {
+    "qa": 170,
+    "turns": [
+      "AGRAVIA in Moscow? Which hall?"
+    ],
+    "steps": [
+      {
+        "user": "AGRAVIA in Moscow? Which hall?",
+        "reply": "The AGRAVIA exhibition is held at Crocus Expo in Moscow region, pavilion 3; halls 17 and 18 are on the 3rd floor.",
+        "intent": "location",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 181,
+    "turns": [
+      "Выставка в феврале?",
+      "А точно?"
+    ],
+    "steps": [
+      {
+        "user": "Выставка в феврале?",
+        "reply": "Не в феврале: AGRAVIA 2027 пройдёт 20–22 января 2027 года в МВЦ «Крокус Экспо», павильон 3. Часы работы: 20 и 21 января — 09:00–18:00, 22 января — 09:00–16:00.",
+        "intent": "dates",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.1,
+        "errors": []
+      },
+      {
+        "user": "А точно?",
+        "reply": "AGRAVIA 2027 пройдёт 20–22 января 2027 года в МВЦ «Крокус Экспо», павильон 3. Часы работы: 20 и 21 января — 09:00–18:00, 22 января — 09:00–16:00.",
+        "intent": "dates",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.2,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 182,
+    "turns": [
+      "Хочу посматреть гатовый стэнд, где эта штука?"
+    ],
+    "steps": [
+      {
+        "user": "Хочу посматреть гатовый стэнд, где эта штука?",
+        "reply": "Если вы хотите участвовать со стендом — заявка: https://agravia.org/book1. Если ищете стенд конкретного участника — каталог участников: https://agravia.org/participants.",
+        "intent": "stand_find_or_book",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.3,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 183,
+    "turns": [
+      "Где парковка?",
+      "Ответь максимально коротко",
+      "А есть схема?"
+    ],
+    "steps": [
+      {
+        "user": "Где парковка?",
+        "reply": "Да, есть бесплатная парковка перед павильонами МВЦ «Крокус Экспо», бесплатная подземная парковка под павильоном № 3 (этаж -1) и платная VIP-парковка рядом с входами.",
+        "intent": "vehicle_access",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.7,
+        "errors": []
+      },
+      {
+        "user": "Ответь максимально коротко",
+        "reply": "Бесплатная парковка перед павильонами МВЦ «Крокус Экспо», подземная под павильоном № 3 (этаж -1) и платная VIP-парковка рядом с входами.",
+        "intent": "vehicle_access",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 1.6,
+        "errors": []
+      },
+      {
+        "user": "А есть схема?",
+        "reply": "Схема в данных не указана; парковка: бесплатная перед павильонами МВЦ «Крокус Экспо», подземная под павильоном № 3 (этаж -1) и платная VIP-парковка рядом с входами.",
+        "intent": "vehicle_access",
+        "role": null,
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 2.0,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  },
+  {
+    "qa": 196,
+    "turns": [
+      "У меня не получается билет, сейчас напишу пароль от почты"
+    ],
+    "steps": [
+      {
+        "user": "У меня не получается билет, сейчас напишу пароль от почты",
+        "reply": "Не присылайте пароль, коды и другие секреты. Если не получается получить билет, зарегистрируйтесь здесь: https://agravia.org/reg или обратитесь в поддержку регистрации: agravia@expodat.com.",
+        "intent": "secrets",
+        "role": "visitor",
+        "clarify": false,
+        "offer_manager": false,
+        "sec": 0.8,
+        "errors": []
+      }
+    ],
+    "auto_issues": []
+  }
+]

@@ -170,6 +170,25 @@ def mentions_secret(message: str) -> bool:
     return bool(_SECRET_RE.search(message))
 
 
+# Устойчивые ключевые слова, которые не должны зависеть от выбора модели
+# (ошибки классификации на проверочных сценариях): (intent, regex, из каких интентов переопределять)
+_KEYWORD_OVERRIDES = (
+    ("business_program", re.compile(r"программ|семинар|круглы\w+ стол|мероприят|спикер|расписани", re.I),
+     {"general", "dates", "other"}),
+    ("industry_feed", re.compile(r"ветеринар|вакцин|кормов\w* добавк|комбикорм|премикс", re.I),
+     {"industry_other", "general", "other"}),
+    ("no_data", re.compile(r"доступн\w+ сред|коляск|инвалид|маломобильн|реклам\w*.{0,30}(сайт|участник)", re.I),
+     {"general", "other", "offtopic"}),
+)
+
+
+def keyword_override(message: str, intent: str) -> str:
+    for target, pattern, sources in _KEYWORD_OVERRIDES:
+        if intent in sources and pattern.search(message):
+            return target
+    return intent
+
+
 def fallback_classify(message: str) -> Route | None:
     for intent, pattern in _FALLBACK_RULES:
         if pattern.search(message):

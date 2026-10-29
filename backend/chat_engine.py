@@ -246,6 +246,7 @@ def handle_message(
     if intent != "secrets" and router.mentions_secret(message):
         # безопасность важнее классификации: пароль/код из СМС в сообщении -> предупреждение
         intent = "secrets"
+    intent = router.keyword_override(message, intent)
     if route.for_other:
         # вопрос "за коллегу": роль этого человека действует только в этом ответе,
         # роль автора диалога не меняется
@@ -294,6 +295,8 @@ def _route(intent: str, ctx: dict) -> EngineResult:
     # --- Не по базе: приветствие, помощь, вне темы, мусор, только роль ------
     if intent in ("greeting", "offtopic"):
         return reply_template(intent)
+    if intent == "no_data":
+        return _no_data(intent, author_role, new_state, lang)
     if intent == "gibberish":
         return reply_template("gibberish", confidence="MEDIUM", matched=False)
     if intent == "help" or (intent == "role_only" and eff_role is None):
