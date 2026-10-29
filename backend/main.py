@@ -14,6 +14,7 @@ from alice import router as alice_router
 from handoff import send_to_manager
 from log_paths import LOG_DIR
 import analytics
+import privacy
 
 BASE_DIR = Path(__file__).parent
 KB = kb_store.KB
@@ -92,7 +93,7 @@ def chat(req: ChatRequest):
             state=req.state, segment_hint=req.segment_hint,
         )
     except Exception as exc:  # LLM-провайдер недоступен и т.п. — не отдаём 500 в виджет
-        _log_dialog(session_id=session_id, message=req.message, error=repr(exc))
+        _log_dialog(session_id=session_id, message=privacy.redact(req.message), error=repr(exc))
         result = chat_engine.error_result(req.state)
         result.notes.append(f"answer: {exc!r}"[:500])
 
@@ -102,7 +103,7 @@ def chat(req: ChatRequest):
         intent=result.intent,
         role=result.role,
         confidence=result.confidence,
-        message=req.message,
+        message=privacy.redact(req.message),
         reply=result.reply,
         matched=result.matched,
         clarified=result.clarified,

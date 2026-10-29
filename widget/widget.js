@@ -38,7 +38,8 @@
   .agv-body{flex:1;overflow-y:auto;padding:14px;background:#FAFAF7;display:flex;flex-direction:column;gap:10px;}
   .agv-msg{max-width:85%;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.45;white-space:pre-wrap;}
   .agv-msg.bot{background:#EDF3EA;color:#1F2A1C;align-self:flex-start;border-bottom-left-radius:2px;}
-  .agv-msg.user{background:#2F6B3E;color:#fff;align-self:flex-end;border-bottom-right-radius:2px;}
+  .agv-msg a{color:#1c5a2c;text-decoration:underline;word-break:break-all;}
+    .agv-msg.user{background:#2F6B3E;color:#fff;align-self:flex-end;border-bottom-right-radius:2px;}
   .agv-choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .agv-choice-btn{border:1px solid #2F6B3E;color:#2F6B3E;background:#fff;border-radius:20px;
     padding:7px 12px;font-size:13px;cursor:pointer;transition:background .15s;}
@@ -92,10 +93,30 @@
     body.scrollTop = body.scrollHeight;
   }
 
+  // Ссылки в ответах бота — кликабельные (ТЗ 28.10: «давать кликабельную прямую
+  // ссылку»). Только http(s), через DOM-узлы и textContent — без innerHTML, чтобы
+  // текст ответа не мог вставить разметку. Завершающая пунктуация в ссылку не входит.
+  function appendLinkified(el, text) {
+    var re = /https?:\/\/[^\s]+/g, last = 0, m;
+    while ((m = re.exec(text)) !== null) {
+      var url = m[0], trail = "";
+      var t = url.match(/[.,;:!?)»"'”]+$/);
+      if (t) { trail = t[0]; url = url.slice(0, url.length - trail.length); }
+      el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var a = document.createElement("a");
+      a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = url;
+      el.appendChild(a);
+      if (trail) el.appendChild(document.createTextNode(trail));
+      last = m.index + m[0].length;
+    }
+    el.appendChild(document.createTextNode(text.slice(last)));
+  }
+
   function addMessage(text, who) {
     var div = document.createElement("div");
     div.className = "agv-msg " + who;
-    div.textContent = text;
+    if (who === "bot") appendLinkified(div, text);
+    else div.textContent = text;
     body.appendChild(div);
     scrollDown();
     return div;

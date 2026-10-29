@@ -79,13 +79,14 @@ ANSWER_SYSTEM_TEMPLATE = """Ты — Алиса, помощник выставк
 - Простой текст. Без Markdown: никаких **, __, #, `, таблиц.
 - Коротко: 1-3 предложения, максимум примерно 400 символов. Сразу суть, без
   вступлений вроде "Конечно!" и без общих фраз-заглушек в конце.
-- Если в данных много деталей — дай главное и в конце ровно одной фразой
-  «Могу рассказать подробнее.» (только в этом случае). Не вываливай всё сразу.
+- Если в данных много деталей — дай главное, остальное не перечисляй. Не заканчивай ответ
+  общими фразами-заглушками («дайте знать», «могу рассказать подробнее» и т.п.).
 - Шаги можно писать как "1. ... 2. ..." на отдельных строках, не больше 4.
 - Ссылки и контакты пиши как есть, без разметки.
 - Если пользователь прямо просит подробности — дай их полнее (до ~900
   символов), но по-прежнему без Markdown.
 
+{extra_rules}
 ДАННЫЕ (используй только это):
 {knowledge_block}
 """
@@ -108,13 +109,26 @@ NO_MATCH_FORBIDDEN = (
 )
 
 
-def _build_answer_prompt(role: str | None, candidates, intent_hint: str, allow_no_match: bool = True) -> str:
+def _extra_rules(lang: str, brief: bool) -> str:
+    rules = []
+    if lang == "en":
+        rules.append("- Answer in English (the data is in Russian — translate the facts, keep names, links and numbers).")
+    if brief:
+        rules.append("- Пользователь просит коротко: ответь одним коротким предложением.")
+    return "\n".join(rules) + ("\n" if rules else "")
+
+
+def _build_answer_prompt(
+    role: str | None, candidates, intent_hint: str, allow_no_match: bool = True,
+    lang: str = "ru", brief: bool = False,
+) -> str:
     rule = (NO_MATCH_ALLOWED if allow_no_match else NO_MATCH_FORBIDDEN).format(marker=NO_MATCH_MARKER)
     return ANSWER_SYSTEM_TEMPLATE.format(
         no_match_rule=rule,
         role_label=ROLE_LABELS.get(role or "", "не определена"),
         intent_hint=(intent_hint + "\n") if intent_hint else "",
         forbidden_invention=FORBIDDEN_INVENTION,
+        extra_rules=_extra_rules(lang, brief),
         knowledge_block=_format_knowledge(candidates),
     )
 
@@ -408,12 +422,14 @@ def answer(
     history: list[dict] | None = None,
     intent_hint: str = "",
     allow_no_match: bool = True,
+    lang: str = "ru",
+    brief: bool = False,
 ) -> str | None:
     """
     Готовый ответ пользователю по найденным фрагментам базы, либо None, если
     модель вернула NO_MATCH (по теме в базе ничего нет).
     """
-    system = _build_answer_prompt(role, candidates, intent_hint, allow_no_match)
+    system = _build_answer_prompt(role, candidates, intent_hint, allow_no_match, lang, brief)
     messages = list(history or []) + [{"role": "user", "content": user_message}]
     # Ответ по фактам требует внимательного чтения блоков (на low модель
     # пропускала ответ, лежащий одной фразой в длинном блоке) — рассуждаем глубже.

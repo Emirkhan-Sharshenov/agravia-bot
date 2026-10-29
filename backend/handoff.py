@@ -49,6 +49,14 @@ async def _send_webhook(client: httpx.AsyncClient, payload: dict) -> bool:
     return 200 <= r.status_code < 300
 
 
+def is_configured() -> bool:
+    """Есть ли реальный канал доставки заявок. Предлагать пользователю «передам
+    менеджеру» можно только если это действительно сработает (ТЗ 28.10, п.6.4)."""
+    return bool(
+        (TELEGRAM_BOT_TOKEN and TELEGRAM_MANAGER_CHAT_ID) or HANDOFF_WEBHOOK_URL or ALLOW_LOG_ONLY
+    )
+
+
 async def send_to_manager(session_id: str, segment: str, name: str, contact: str, question: str) -> bool:
     """True — только если заявка доставлена хотя бы по одному настроенному каналу."""
     payload = {
