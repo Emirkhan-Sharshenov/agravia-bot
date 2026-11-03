@@ -30,7 +30,10 @@ _TEXT_TYPES = ("text/", "application/json", "application/javascript", "applicati
 
 async def _call(event: dict) -> dict:
     method = event.get("httpMethod") or "GET"
-    path = event.get("path") or event.get("url") or "/"
+    # За API Gateway "path" — шаблон маршрута ("/{proxy+}"), реальный путь лежит в
+    # pathParams.proxy / url; при прямом вызове функции — в url / path.
+    proxy = (event.get("pathParams") or event.get("params") or {}).get("proxy")
+    path = ("/" + proxy.lstrip("/")) if proxy else (event.get("url") or event.get("path") or "/")
     path = _FUNCTION_ID_PREFIX.sub("", path.split("?", 1)[0]) or "/"
     headers = {k: v for k, v in (event.get("headers") or {}).items() if k.lower() != "host"}
     params = event.get("queryStringParameters") or {}
