@@ -204,8 +204,11 @@ _KEYWORD_OVERRIDES = (
     ("pd_request", re.compile(r"список\w* (телефон|почт|e-?mail)|телефон\w* (других )?посетител", re.I), None),
     ("contact", re.compile(r"коммуникационн\w+ план", re.I), None),
     ("iagri_award", re.compile(r"(премия|награда).{0,20}iagri|iagri.{0,20}(премия|награда)|премия айагри", re.I), None),
+    ("participation", re.compile(r"(связаться|написать|контакт\w*|обратиться).{0,30}участи", re.I), {"contact", "other"}),
+    ("iagri_have_ticket", re.compile(r"(у меня|уже (купил|получил|зарегистрир)\w*).{0,40}(билет|регистрац).{0,60}(iagri|айагри|ай-агри)|(iagri|айагри|ай-агри).{0,40}пустят", re.I),
+     {"exhibit_or_visit", "visitor_registration", "ticket_info", "iagri_registration", "other", "general"}),
     ("no_data", re.compile(r"доступн\w+ сред|коляск|инвалид|маломобильн|реклам\w*.{0,30}(сайт|участник)", re.I),
-     {"general", "other", "offtopic"}),
+     {"general", "other", "offtopic", "promo_campaign"}),
 )
 
 
