@@ -7,7 +7,7 @@ from pathlib import Path
 import httpx
 
 ap = argparse.ArgumentParser()
-ap.add_argument("report"); ap.add_argument("--base", default="https://backend-fawn-nine-72.vercel.app")
+ap.add_argument("report"); ap.add_argument("--base", default="https://d5daon1oep4l58a9tuca.jki8ffxa.apigw.yandexcloud.net")
 ap.add_argument("--pause", type=float, default=6); ap.add_argument("--verdicts", default="fail,partial")
 a = ap.parse_args()
 rows = json.load(open(a.report, encoding="utf-8"))

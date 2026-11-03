@@ -10,7 +10,7 @@ import time
 import httpx
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--base", default="https://backend-fawn-nine-72.vercel.app")
+ap.add_argument("--base", default="https://d5daon1oep4l58a9tuca.jki8ffxa.apigw.yandexcloud.net")
 ap.add_argument("--pause", type=float, default=12.0)
 ARGS = ap.parse_args()
 

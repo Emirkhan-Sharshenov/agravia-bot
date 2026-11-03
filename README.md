@@ -190,9 +190,12 @@ uvicorn main:app --reload --port 8811
 Одна строка в футер сайта:
 
 ```html
-<script src="https://ВАШ_ДОМЕН/widget/widget.js"
-        data-api="https://ВАШ_ДОМЕН/api"></script>
+<script src="https://d5daon1oep4l58a9tuca.jki8ffxa.apigw.yandexcloud.net/widget/widget.js"
+        data-api="https://d5daon1oep4l58a9tuca.jki8ffxa.apigw.yandexcloud.net/api"></script>
 ```
+
+Адрес выше — бот в Yandex Cloud (см. `deploy/yandex/README.md`). Когда к шлюзу
+привяжут свой домен (например `alisa.agravia.org`), замените оба адреса.
 
 Бэкенд по умолчанию сам отдаёт файлы виджета по пути `/widget/...`
 (смонтировано в `main.py`), так что для старта достаточно поднять
