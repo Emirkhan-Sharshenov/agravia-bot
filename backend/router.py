@@ -196,7 +196,7 @@ _KEYWORD_OVERRIDES = (
     ("industry_feed", re.compile(r"ветеринар|вакцин|кормов\w* добавк|комбикорм|премикс", re.I),
      {"industry_other", "general", "other"}),
     ("ticket_info", re.compile(r"без регистрац|регистр\w* на месте|на один день или на три|сколько дней.{0,20}билет|с ребён|с ребен|с детьм", re.I),
-     {"visitor_registration", "ticket_info", "general", "other"}),
+     {"visitor_registration", "ticket_info", "general", "other", "entry", "pass", "badge"}),
     ("exhibit_or_visit", re.compile(r"(стенд|экспонент).{0,60}(билет|посетител)|(билет|посетител).{0,60}(стенд|экспонент)", re.I),
      {"participation", "visitor_registration", "other", "general"}),
     ("dates", re.compile(r"феврал|декабр", re.I), {"visitor_registration", "ticket_info", "other", "general"}),
