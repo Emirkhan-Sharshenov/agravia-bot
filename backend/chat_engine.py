@@ -25,6 +25,7 @@
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 
 import analytics
@@ -295,6 +296,8 @@ def _route(intent: str, ctx: dict) -> EngineResult:
     # --- Не по базе: приветствие, помощь, вне темы, мусор, только роль ------
     if intent in ("greeting", "offtopic"):
         return reply_template(intent)
+    if intent == "location" and lang == "en":
+        return reply_template("location")
     if intent == "no_data":
         return _no_data(intent, author_role, new_state, lang)
     if intent == "gibberish":
@@ -321,6 +324,8 @@ def _route(intent: str, ctx: dict) -> EngineResult:
         key, prefix, suffix, offer = intent, "", "", False
         if intent == "visitor_registration" and new_state["project"] == "iagri":
             key = "iagri_registration"
+            if re.search(r"у меня (есть )?(уже )?билет|уже (зарегистрир|есть билет)", ctx["message"], re.I):
+                key = "iagri_have_ticket"
         elif intent == "dates":
             prefix = _wrong_month_prefix(ctx["message"], lang)
         elif intent == "contact" and handoff.is_configured():

@@ -16,6 +16,7 @@ LINKS = {
     "reg": "https://agravia.org/reg",
     "reg_en": "https://agravia.org/reg_en",
     "iagri_reg": "https://iagri-expo.com/reg",
+    "iagri_award": "https://iagri-expo.com/award",
     "book1": "https://agravia.org/book1",
     "participants": "https://agravia.org/participants",
     "program": "https://agravia.org/program",
@@ -130,8 +131,20 @@ TEMPLATES: dict[str, dict[str, str]] = {
               "at the end of November 2026. Details and nominees: {competition}.",
     },
     "iagri_award": {
-        "ru": "Премия iAGRI — отдельная награда, не связанная с конкурсом «Лучший продукт AGRAVIA». Подтверждённых "
-              "условий и страницы премии у меня пока нет — уточните у организатора: {organizer_phone}, {organizer}.",
+        "ru": "Премия iAGRI — отдельная награда, не связанная с конкурсом «Лучший продукт AGRAVIA». Условия и "
+              "информация: {iagri_award}.",
+        "en": "The iAGRI Award is a separate award, not related to the \"Best Product AGRAVIA\" competition. "
+              "Details: {iagri_award}.",
+    },
+    "iagri_have_ticket": {
+        "ru": "Один билет действует и на AGRAVIA, и на iAGRI, повторно регистрироваться не нужно. Если билета ещё "
+              "нет: {iagri_reg}.",
+        "en": "One ticket is valid for both AGRAVIA and iAGRI, no need to register again. If you don't have a "
+              "ticket yet: {iagri_reg}.",
+    },
+    "location": {
+        "ru": "AGRAVIA 2027 проходит в МВЦ «Крокус Экспо», павильон 3 (залы 17 и 18 — на 3 этаже).",
+        "en": "AGRAVIA 2027 takes place at Crocus Expo, Pavilion 3 (halls 17 and 18 are on the 3rd floor).",
     },
     "business_program": {
         "ru": "Деловая программа AGRAVIA 2027 ещё формируется. Актуальные мероприятия, время и спикеры "
@@ -232,7 +245,7 @@ TEMPLATES: dict[str, dict[str, str]] = {
     },
 }
 
-TEMPLATE_INTENTS = {k for k in TEMPLATES if k not in ("no_data", "unavailable")}
+TEMPLATE_INTENTS = {k for k in TEMPLATES if k not in ("no_data", "unavailable", "location")}
 
 
 def _fields() -> dict[str, str]:

@@ -278,9 +278,14 @@ def _retry_on_rate_limit(post, resp: httpx.Response) -> httpx.Response:
 _answer_model_unavailable = False
 
 
+def _spill_models(current: str) -> list[str]:
+    raw = os.environ.get("GROQ_SPILL_MODELS", "openai/gpt-oss-120b,openai/gpt-oss-20b")
+    return [m.strip() for m in raw.split(",") if m.strip() and m.strip() != current]
+
+
 def _groq_chat(
     system: str, messages: list[dict], max_tokens: int, temperature: float,
-    effort: str | None = None, model: str | None = None,
+    effort: str | None = None, model: str | None = None, _spill: bool = True,
 ) -> str:
     global _groq_reasoning_effort_supported, _answer_model_unavailable
     if model and _answer_model_unavailable:
@@ -318,6 +323,15 @@ def _groq_chat(
         _groq_reasoning_effort_supported = False
         resp = _post(False)
     resp = _retry_on_rate_limit(lambda: _post(_groq_reasoning_effort_supported), resp)
+    if resp.status_code == 429 and _spill:
+        # у каждой модели Groq свой дневной/минутный лимит: если исчерпан лимит
+        # одной, пробуем другую из списка, а не отдаём пользователю ошибку
+        for alt in _spill_models(model):
+            try:
+                return _groq_chat(system, messages, max_tokens, temperature, effort, model=alt, _spill=False)
+            except RuntimeError as exc:
+                if "429" not in str(exc):
+                    raise
     if resp.status_code in (403, 404) and requested_override and "model" in resp.text.lower():
         _answer_model_unavailable = True
         return _groq_chat(system, messages, max_tokens, temperature, effort, model=None)

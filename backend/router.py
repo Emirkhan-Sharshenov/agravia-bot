@@ -147,19 +147,36 @@ def detect_lang(message: str) -> str:
     return "en" if latin / len(letters) > 0.7 else "ru"
 
 
-# Порядок важен: первое совпавшее правило побеждает. Только основные коммерческие
-# маршруты — для работы без LLM.
+# Порядок важен: первое совпавшее правило побеждает. Работает без LLM (лимиты,
+# сбой провайдера) и должно давать тот же маршрут, что и модель, на типовых вопросах.
+_ROLE_ONLY_RE = re.compile(
+    r"^\s*(я|мы|а я|я просто)?\s*(новый\s+|будущий\s+)?(посетител|экспонент|застройщик|монтажник|участник)\w*\s*[.!]*\s*$", re.I)
 _FALLBACK_RULES = (
     ("secrets", re.compile(r"парол|password|смс|sms", re.I)),
+    ("iagri_award", re.compile(r"(премия|награда).{0,20}iagri|iagri.{0,20}(премия|награда)|премия айагри", re.I)),
+    ("pd_request", re.compile(r"список\w* (телефон|почт|e-?mail)|телефон\w* (других )?посетител|чужи\w+ (данн|телефон)", re.I)),
+    ("privacy_delete", re.compile(r"удал\w+.{0,30}(данн|информац)|(данн|информац).{0,30}удал", re.I)),
+    ("privacy_storage", re.compile(r"хран\w+.{0,30}(данн|переписк)|передаёте|передаете|трансграничн|персональн", re.I)),
+    ("reg_support", re.compile(r"уже зарегистрир|не приш\w+ (письм|билет)|письм\w* (нет|не приш)|ошибк\w* в (e-?mail|почт)|не получа\w+ (билет|регистр)", re.I)),
     ("iagri_registration", re.compile(r"(iagri|айагри|ай-?агри).*(рег|билет|register|ticket)|(рег|билет|register|ticket).*(iagri|айагри)", re.I)),
-    ("participation", re.compile(r"стенд|экспонент|выставл|exhibit|stand|заявк\w* на участ|участ\w* в выставк|стать участник", re.I)),
+    ("cabinet", re.compile(r"личн\w+ кабинет|кабинет\w* (экспонент|участник)", re.I)),
+    ("badge", re.compile(r"бейдж|badge", re.I)),
+    ("demontage", re.compile(r"демонтаж", re.I)),
+    ("equipment_out", re.compile(r"вывез|вывоз", re.I)),
+    ("equipment_in", re.compile(r"завез|завоз|ввоз|разгрузк|оборудовани\w* завоз", re.I)),
+    ("montage", re.compile(r"монтаж|застройк|заезд", re.I)),
+    ("pass", re.compile(r"пропуск", re.I)),
+    ("vehicle_access", re.compile(r"парковк|на машине|заехать", re.I)),
+    ("exhibit_or_visit", re.compile(r"(стенд|экспонент).*(билет|посетител)|(билет|посетител).*(стенд|экспонент)", re.I)),
+    ("participation", re.compile(r"стенд|стать экспонент|хочу.{0,20}(экспонент|участв)|выставл|exhibit|stand|заявк\w* на участ|участ\w* в выставк|стать участник", re.I)),
     ("catalog", re.compile(r"каталог|список участник|кто участвует|поставщик|participants", re.I)),
-    ("business_program", re.compile(r"программ|конференц|спикер|program|speaker", re.I)),
+    ("business_program", re.compile(r"программ|конференц|спикер|семинар|program|speaker", re.I)),
     ("competition", re.compile(r"конкурс|лучший продукт|competition", re.I)),
     ("banners", re.compile(r"баннер|banner", re.I)),
-    ("visitor_registration", re.compile(r"билет|регистр|попасть|посетит|ticket|register|visit", re.I)),
-    ("contact", re.compile(r"менеджер|телефон|контакт|человек|phone|contact", re.I)),
-    ("dates", re.compile(r"когда|даты|дата|числ|when|dates", re.I)),
+    ("contact", re.compile(r"менеджер|телефон|контакт|человек|коммуникационн\w+ план|phone|contact", re.I)),
+    ("visitor_registration", re.compile(r"билет|регистр|попасть|посетит|прийти|приехать|нажать|ticket|register|visit", re.I)),
+    ("location", re.compile(r"где (проход|находит|будет)|павильон|\bзал\b|адрес|как добраться|where|which hall|pavilion|\bhall\b", re.I)),
+    ("dates", re.compile(r"когда|даты|дата|числ|феврал|when|dates", re.I)),
 )
 
 
@@ -171,12 +188,22 @@ def mentions_secret(message: str) -> bool:
 
 
 # Устойчивые ключевые слова, которые не должны зависеть от выбора модели
-# (ошибки классификации на проверочных сценариях): (intent, regex, из каких интентов переопределять)
+# (ошибки классификации на проверочных сценариях):
+# (intent, regex, из каких интентов переопределять; None — из любых)
 _KEYWORD_OVERRIDES = (
     ("business_program", re.compile(r"программ|семинар|круглы\w+ стол|мероприят|спикер|расписани", re.I),
      {"general", "dates", "other"}),
     ("industry_feed", re.compile(r"ветеринар|вакцин|кормов\w* добавк|комбикорм|премикс", re.I),
      {"industry_other", "general", "other"}),
+    ("ticket_info", re.compile(r"без регистрац|регистр\w* на месте|на один день или на три|сколько дней.{0,20}билет|с ребён|с ребен|с детьм", re.I),
+     {"visitor_registration", "ticket_info", "general", "other"}),
+    ("exhibit_or_visit", re.compile(r"(стенд|экспонент).{0,60}(билет|посетител)|(билет|посетител).{0,60}(стенд|экспонент)", re.I),
+     {"participation", "visitor_registration", "other", "general"}),
+    ("dates", re.compile(r"феврал|декабр", re.I), {"visitor_registration", "ticket_info", "other", "general"}),
+    ("privacy_delete", re.compile(r"удал\w+.{0,30}(данн|информац)", re.I), None),
+    ("pd_request", re.compile(r"список\w* (телефон|почт|e-?mail)|телефон\w* (других )?посетител", re.I), None),
+    ("contact", re.compile(r"коммуникационн\w+ план", re.I), None),
+    ("iagri_award", re.compile(r"(премия|награда).{0,20}iagri|iagri.{0,20}(премия|награда)|премия айагри", re.I), None),
     ("no_data", re.compile(r"доступн\w+ сред|коляск|инвалид|маломобильн|реклам\w*.{0,30}(сайт|участник)", re.I),
      {"general", "other", "offtopic"}),
 )
@@ -184,15 +211,19 @@ _KEYWORD_OVERRIDES = (
 
 def keyword_override(message: str, intent: str) -> str:
     for target, pattern, sources in _KEYWORD_OVERRIDES:
-        if intent in sources and pattern.search(message):
+        if (sources is None or intent in sources) and pattern.search(message):
             return target
     return intent
 
 
 def fallback_classify(message: str) -> Route | None:
+    lang = detect_lang(message)
+    if _ROLE_ONLY_RE.match(message):
+        return Route(intent="role_only", role=role_from_words(message), lang=lang)
     for intent, pattern in _FALLBACK_RULES:
         if pattern.search(message):
-            return Route(intent=intent, role=None, lang=detect_lang(message))
+            role = role_from_words(message) if intent in ROLE_DEPENDENT else None
+            return Route(intent=intent, role=role, lang=lang)
     return None
 
 
