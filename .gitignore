@@ -18,3 +18,4 @@ backend/kb_embeddings_cache.json
 
 # Результаты прогона QA (генерируются backend/qa/run_qa.py)
 backend/qa/results.json
+dist/

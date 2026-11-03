@@ -390,6 +390,66 @@ def _compat_chat(system: str, messages: list[dict], max_tokens: int, temperature
 
 
 # ---------------------------------------------------------------------
+# Yandex AI Studio (Alice AI LLM и др.): OpenAI-совместимый endpoint
+# ---------------------------------------------------------------------
+# Внутри Yandex Cloud ключ не нужен: функция/контейнер работает от сервисного
+# аккаунта с ролью ai.languageModels.user, IAM-токен берём у metadata-сервиса.
+# Для запуска вне облака можно задать YANDEX_API_KEY (ключ сервисного аккаунта).
+#   LLM_PROVIDER=yandex
+#   YANDEX_FOLDER_ID   — идентификатор каталога
+#   YANDEX_MODEL       — gpt://<folder_id>/aliceai-llm-flash/latest (или другая модель)
+#   YANDEX_BASE_URL    — по умолчанию https://ai.api.cloud.yandex.net/v1
+
+_METADATA_TOKEN_URL = "http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token"
+_iam_token: dict = {"value": "", "expires": 0.0}
+
+
+def _yandex_auth_header() -> str:
+    api_key = os.environ.get("YANDEX_API_KEY", "")
+    if api_key:
+        return f"Api-Key {api_key}"
+    if time.time() >= _iam_token["expires"] - 60:
+        resp = httpx.get(_METADATA_TOKEN_URL, headers={"Metadata-Flavor": "Google"}, timeout=5)
+        resp.raise_for_status()
+        data = resp.json()
+        _iam_token["value"] = data["access_token"]
+        _iam_token["expires"] = time.time() + float(data.get("expires_in", 600))
+    return f"Bearer {_iam_token['value']}"
+
+
+def _yandex_chat(system: str, messages: list[dict], max_tokens: int, temperature: float) -> str:
+    folder = os.environ.get("YANDEX_FOLDER_ID", "")
+    model = os.environ.get("YANDEX_MODEL") or (f"gpt://{folder}/aliceai-llm-flash/latest" if folder else "")
+    if not (folder and model):
+        raise RuntimeError("Для yandex нужны YANDEX_FOLDER_ID (и при необходимости YANDEX_MODEL)")
+    base = os.environ.get("YANDEX_BASE_URL", "https://ai.api.cloud.yandex.net/v1").rstrip("/")
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": _yandex_auth_header(),
+        "x-folder-id": folder,
+        "OpenAI-Project": folder,
+    }
+
+    def _post() -> httpx.Response:
+        return httpx.post(
+            f"{base}/chat/completions",
+            headers=headers,
+            json={
+                "model": model,
+                "messages": [{"role": "system", "content": system}] + messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+            },
+            timeout=25,
+        )
+
+    resp = _retry_on_rate_limit(_post, _post())
+    if resp.status_code >= 400:
+        raise RuntimeError(f"Yandex LLM API error {resp.status_code}: {resp.text}")
+    return (resp.json()["choices"][0]["message"].get("content") or "").strip()
+
+
+# ---------------------------------------------------------------------
 # Anthropic (опционально)
 # ---------------------------------------------------------------------
 
@@ -420,12 +480,14 @@ def complete(
         return _groq_chat(system, messages, max_tokens, temperature, effort, model)
     if provider == "gigachat":
         return _gigachat().chat(system, messages, max_tokens, temperature)
-    if provider in ("openai_compatible", "yandex"):
+    if provider == "yandex":
+        return _yandex_chat(system, messages, max_tokens, temperature)
+    if provider == "openai_compatible":
         return _compat_chat(system, messages, max_tokens, temperature)
     if provider == "anthropic":
         return _anthropic_chat(system, messages, max_tokens, temperature)
     raise RuntimeError(
-        f"Неизвестный LLM_PROVIDER: {provider!r} (ожидается 'groq', 'gigachat', 'openai_compatible' или 'anthropic')"
+        f"Неизвестный LLM_PROVIDER: {provider!r} (ожидается 'groq', 'gigachat', 'yandex', 'openai_compatible' или 'anthropic')"
     )
 
 
