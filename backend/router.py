@@ -204,6 +204,12 @@ def mentions_secret(message: str) -> bool:
 # (ошибки классификации на проверочных сценариях):
 # (intent, regex, из каких интентов переопределять; None — из любых)
 _KEYWORD_OVERRIDES = (
+    # Вопрос про еду на площадке не должен превращаться в кейтеринг на стенде.
+    ("general", re.compile(r"поесть|пообедать|перекусить|кафе|ресторан|фудкорт|где\s+(?:можно\s+)?(?:поесть|пообедать)", re.I),
+     {"catering", "catalog", "other"}),
+    # "Где взять/купить билет" — регистрация, а не поддержка из-за не пришедшего письма.
+    ("visitor_registration", re.compile(r"где\s+(?:взять|купить|получить|оформить)\s+билет|^\s*где\s+билет\s*\?*\s*$", re.I),
+     {"reg_support", "registration_complete"}),
     # Грузовой подъезд к монтажным воротам — логистика экспонента, а не маршрут на метро.
     ("equipment_in", re.compile(r"монтажн\w*\s+ворот|ворот\w*.{0,20}павильон|куда.{0,20}(на\s+)?разгрузк", re.I),
      {"travel_directions", "visit_plan", "location", "vehicle_access", "general", "other"}),
@@ -250,7 +256,7 @@ _KEYWORD_OVERRIDES = (
     ("iagri_have_ticket", re.compile(r"(у меня|уже (купил|получил|зарегистрир)\w*).{0,40}(билет|регистрац).{0,60}(iagri|айагри|ай-агри)|(iagri|айагри|ай-агри).{0,40}пустят", re.I),
      {"exhibit_or_visit", "visitor_registration", "ticket_info", "iagri_registration", "other", "general"}),
     ("no_data", re.compile(r"доступн\w+ сред|коляск|инвалид|маломобильн|реклам\w*.{0,30}(сайт|участник)", re.I),
-     {"general", "other", "offtopic", "promo_campaign"}),
+     {"general", "other", "offtopic", "promo_campaign", "promote_exhibitor"}),
 )
 
 

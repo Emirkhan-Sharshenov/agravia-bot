@@ -298,6 +298,7 @@ def handle_message(
     }
     out = _route(intent, ctx)
     out.reply = pilot_patch.polish_missing_fact(out.reply, ctx['lang'])
+    out.reply = _avoid_repeat(out.reply, safe_history, ctx['lang'])
     if router.detect_lang(message) == 'zh' or route.lang == 'zh':
         out.reply = pilot_patch.localize_chinese(out.reply)
         if out.reply.startswith('这项信息需要向主办方确认'):
@@ -372,6 +373,17 @@ def _route(intent: str, ctx: dict) -> EngineResult:
 
     # --- Факты базы знаний -------------------------------------------------------
     return _kb_answer(intent, ctx)
+
+
+def _avoid_repeat(reply: str, history: list[dict], lang: str) -> str:
+    """Тот же ответ дословно второй раз подряд раздражает (отзывы тестировщиков):
+    добавляем, куда обратиться, если этого недостаточно."""
+    last = next((t.get("content") for t in reversed(history) if t.get("role") == "assistant"), None)
+    if not last or last.strip() != reply.strip() or lang not in ("ru", "en"):
+        return reply
+    if lang == "en":
+        return f"{reply} If this is not enough, please clarify your question or contact the organizer: {routes.ORGANIZER_PHONE}, {routes.LINKS['organizer']}."
+    return f"{reply} Если этого недостаточно, уточните вопрос или свяжитесь с организатором: {routes.ORGANIZER_PHONE}, {routes.LINKS['organizer']}."
 
 
 def _kb_answer(intent: str, ctx: dict) -> EngineResult:
