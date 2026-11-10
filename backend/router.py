@@ -20,11 +20,19 @@ import re
 from dataclasses import dataclass
 
 import llm
+import pilot_patch
 
 ROLES = ("visitor", "exhibitor", "prospect", "builder")
 
 # intent -> описание для классификатора.
 INTENT_DESCRIPTIONS = {
+    "attendance_confirmation": "подтверждение посещения для работы, печать в командировочном листе; не подтверждение регистрации и не письмо с билетом",
+    "unified_ticket": "единый билет на AGRAVIA и iAGRI, нужна ли вторая регистрация, доступ на обе выставки и все три дня",
+    "registration_complete": "посетитель уже завершил регистрацию или получил билет и спрашивает, что делать дальше; если письмо или билет не пришли, выбирай reg_support",
+    "international_registration": "как зарегистрироваться иностранному посетителю, в том числе из Узбекистана или Казахстана; без вопросов визы и валюты оплаты",
+    "safe_payment": "оплата участия переводом на личную карту менеджера или физическому лицу; проверка подозрительных реквизитов",
+    "payment_currency": "в какой валюте можно оплатить участие или стенд, допустимы ли доллары или евро",
+    "discount_confirmation": "подтверждение обещанной скидки, бесплатного стенда или индивидуальных коммерческих договорённостей",
     "dates": "даты и часы работы выставки, проверка даты (например «а не в другом месяце?»)",
     "location": "где проходит выставка, адрес, павильон, зал, этаж, как добраться и найти зал",
     "visitor_registration": "как получить билет, зарегистрироваться или попасть на выставку посетителем/гостем, где билет, бейдж или пропуск ПОСЕТИТЕЛЯ, ссылка на регистрацию, просьба прислать билет",
@@ -71,6 +79,8 @@ INTENT_DESCRIPTIONS = {
     "gibberish": "бессмысленный набор символов, нераспознаваемый ввод",
 }
 
+INTENT_DESCRIPTIONS.update(pilot_patch.DESCRIPTIONS)
+
 # Темы, ответ на которые зависит от роли: если роль неизвестна — сначала
 # уточняем (ТЗ 3.2), а не угадываем. Парковка — "практически всегда
 # посетитель" (ТЗ 28.10), поэтому в этот набор не входит.
@@ -89,7 +99,7 @@ for_other — true, если пользователь спрашивает за 
 человека, а не автора сообщения.
 project — о каком проекте речь: iagri, если пользователь хочет именно на iAGRI; agravia, если на AGRAVIA или явно \
 переключился на неё; иначе значение из состояния диалога (none, если проект не назван).
-lang — язык сообщения: ru или en.
+lang — язык текущего сообщения: ru, en или zh. Язык прошлого ответа не определяет язык нового сообщения.
 brief — true, если просит ответить коротко.
 
 ТЕМЫ (intent):
@@ -100,6 +110,7 @@ brief — true, если просит ответить коротко.
 тему из состояния: если бот задал уточняющий вопрос — это pending_intent, иначе тема прошлого хода.
 - Если пользователь исправляет себя («нет, я про …») — тема, роль и проект берутся из исправления.
 - Переход к соседнему аспекту — выбирай тему этого аспекта. Конкретная тема важнее help.
+- Явный новый вопрос важнее прежней темы. Вопрос о сроке визы не равен просьбе повторить контакты. Услуги действующему участнику не равны новой заявке на стенд.
 - Опечатки, шум и эмоции не мешают: определи суть запроса.
 
 СОСТОЯНИЕ ДИАЛОГА:
@@ -140,6 +151,8 @@ def role_from_words(message: str) -> str | None:
 
 
 def detect_lang(message: str) -> str:
+    if re.search(r'[\u4e00-\u9fff]', message):
+        return 'zh'
     letters = [c for c in message if c.isalpha()]
     if not letters:
         return "ru"
@@ -191,6 +204,29 @@ def mentions_secret(message: str) -> bool:
 # (ошибки классификации на проверочных сценариях):
 # (intent, regex, из каких интентов переопределять; None — из любых)
 _KEYWORD_OVERRIDES = (
+    ("attendance_confirmation", re.compile(r"командировочн|подтверждени\w*.{0,30}посещени", re.I),
+     {"visitor_registration", "general", "other", "contact", "attendance_confirmation"}),
+    ("montage", re.compile(r"(собира\w*|собрат\w*|сборк\w*).{0,25}стенд|стенд.{0,25}(собира\w*|собрат\w*|сборк\w*)", re.I),
+     {"demontage", "participation", "general", "other", "montage"}),
+    ("demontage", re.compile(r"(разбира\w*|разобрат\w*|разборк\w*).{0,25}стенд|стенд.{0,25}(разбира\w*|разобрат\w*|разборк\w*)", re.I),
+     {"montage", "participation", "general", "other", "demontage"}),
+    # Specific commercial questions outrank generic registration/participation.
+    ("reg_support", re.compile(r"не приш\w*.{0,15}(письм|билет)|(письм|билет)\w*.{0,10}(нет|не приш)|не (могу|получа\w*)\s+(получить\s+)?(билет|зарегистр)|ошиб\w*.{0,20}(почт|e-?mail)", re.I),
+     {"visitor_registration", "iagri_registration", "registration_complete", "ticket_info", "general", "other", "reg_support"}),
+    ("safe_payment", re.compile(r"(оплат|перев[её]?[сдз]|плат[её]ж).{0,80}(личн\w*.{0,15}карт|карт\w*.{0,20}менеджер|физлиц)|(личн\w*.{0,15}карт|карт\w*.{0,20}менеджер|физлиц).{0,80}(оплат|перев|плат[её]ж)", re.I),
+     {"participation", "contact", "exhibit_or_visit", "other", "general", "safe_payment"}),
+    ("payment_currency", re.compile(r"(оплат|плат[её]ж|стенд|участи).{0,70}(доллар|евро|валют|\busd\b|\beur\b)|(доллар|евро|валют).{0,70}(оплат|стенд|участи)", re.I),
+     {"participation", "other", "general", "contact", "payment_currency"}),
+    ("discount_confirmation", re.compile(r"скидк|бесплатн\w*.{0,20}стенд|стенд.{0,20}бесплатн", re.I),
+     {"participation", "other", "general", "contact", "discount_confirmation"}),
+    ("unified_ticket", re.compile(r"(?=.*(?:agravia|аграви))(?=.*(?:i\s?agri|ай-?агри))(?=.*(?:билет|рег|бейдж|пустят|ticket|register|registration|badge))", re.I),
+     {"visitor_registration", "iagri_registration", "ticket_info", "iagri_have_ticket", "general", "other", "unified_ticket"}),
+    ("catalog", re.compile(r"(?=.*(?:каталог|спис[оа]к(?!\s+документ)))(?=.*(?:202[67]|прошл|актуальн|обновл|новый))", re.I),
+     {"dates", "general", "other", "catalog", "participation", "exhibit_or_visit", "visitor_registration", "ticket_info", "reg_support", "registration_complete", "international_registration"}),
+    ("registration_complete", re.compile(r"\bуже\s+зарегистрир|\bрегистр\w*\s+(уже\s+)?прош|\b(уже\s+)?(получил|получила|есть)\s+(уже\s+)?(электронн\w*\s+)?билет", re.I),
+     {"visitor_registration", "iagri_registration", "ticket_info", "general", "other", "reg_support", "registration_complete"}),
+    ("international_registration", re.compile(r"(?=.*(?:иностран|узбекистан|казахстан|беларус|кыргызстан|таджикистан))(?=.*(?:регистр|билет|посетит))", re.I),
+     {"visitor_registration", "ticket_info", "general", "other", "international_registration"}),
     ("business_program", re.compile(r"программ|семинар|круглы\w+ стол|мероприят|спикер|расписани", re.I),
      {"general", "dates", "other"}),
     ("industry_feed", re.compile(r"ветеринар|вакцин|кормов\w* добавк|комбикорм|премикс", re.I),
@@ -213,6 +249,10 @@ _KEYWORD_OVERRIDES = (
 
 
 def keyword_override(message: str, intent: str) -> str:
+    if mentions_secret(message):
+        return "secrets"
+    if intent in {"secrets", "pd_request", "privacy_delete", "privacy_storage"}:
+        return intent
     for target, pattern, sources in _KEYWORD_OVERRIDES:
         if (sources is None or intent in sources) and pattern.search(message):
             return target
@@ -292,7 +332,16 @@ def classify(message: str, history: list[dict] | None, state: dict) -> Route:
     project = str(data.get("project", "")).strip().lower()
     if project not in PROJECTS:
         project = None
-    lang = "en" if str(data.get("lang", "")).strip().lower() == "en" else "ru"
+    lang = str(data.get("lang", "")).strip().lower()
+    if lang not in {'ru','en','zh'}:
+        lang = detect_lang(message)
+    if detect_lang(message) == 'zh':
+        lang = 'zh'
+    # Latin brand names must not switch an otherwise Russian question to English.
+    cyrillic = sum(1 for char in message if "а" <= char.lower() <= "я" or char.lower() == "ё")
+    latin = sum(1 for char in message if "a" <= char.lower() <= "z")
+    if cyrillic >= 8 and cyrillic > latin:
+        lang = "ru"
     return Route(
         intent=intent,
         role=role,
@@ -301,3 +350,4 @@ def classify(message: str, history: list[dict] | None, state: dict) -> Route:
         for_other=data.get("for_other") is True,
         brief=data.get("brief") is True,
     )
+

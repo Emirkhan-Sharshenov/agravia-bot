@@ -51,3 +51,4 @@ def shorten(text: str, limit: int = 650) -> str:
         if pos >= limit * 0.5:
             return cut[: pos + (0 if sep == "\n" else 1)].rstrip()
     return cut.rsplit(" ", 1)[0].rstrip()
+

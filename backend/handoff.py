@@ -94,3 +94,4 @@ async def send_to_manager(session_id: str, segment: str, name: str, contact: str
             except httpx.HTTPError:
                 pass
     return delivered
+

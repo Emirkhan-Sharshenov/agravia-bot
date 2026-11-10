@@ -264,3 +264,4 @@ def rank(
         )
     out.sort(key=lambda c: c.score, reverse=True)
     return out, (EMB_LOW if used_semantic else FUZZY_LOW)
+

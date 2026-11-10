@@ -36,6 +36,7 @@ import privacy
 import retrieval
 import router
 import routes
+import pilot_patch
 from text_format import clean_markdown, shorten
 
 ROLE_QUESTIONS = {
@@ -248,6 +249,26 @@ def handle_message(
         # безопасность важнее классификации: пароль/код из СМС в сообщении -> предупреждение
         intent = "secrets"
     intent = router.keyword_override(message, intent)
+    intent = pilot_patch.override_intent(message, intent, state)
+    # A badge without a named type or established role is genuinely ambiguous.
+    # Do not turn the classifier's guessed visitor role into a registration link.
+    generic_badge = re.fullmatch(
+        r"\s*(?:(?:мне|нам)\s+)?(?:(?:нужен|нужны|нужно|как получить|где получить|где оформить|как оформить)\s+)?бейдж\w*[?!.\s]*",
+        message, re.I,
+    )
+    if generic_badge and state["role"] is None and intent in {
+        "visitor_registration", "badge", "general", "other"
+    }:
+        intent = "badge"
+        route.role = None
+    # A short contact follow-up stays with an active registration problem.
+    # Explicit new topics still use the classifier and normal topic rules.
+    if state["intent"] == "reg_support" and re.fullmatch(
+        r"\s*(а\s+)?(кому\s+(написать|звонить|позвонить)|куда\s+(написать|звонить)|"
+        r"дайте\s+(почту|телефон|контакт)|who\s+(can|should)\s+i\s+contact)[?!.\s]*",
+        message, re.I,
+    ):
+        intent = "reg_support"
     if route.for_other:
         # вопрос "за коллегу": роль этого человека действует только в этом ответе,
         # роль автора диалога не меняется
@@ -271,11 +292,19 @@ def handle_message(
     project = route.project or state["project"]
     ctx = {
         "message": message, "history": safe_history, "safe_message": safe_message,
-        "pending": pending, "lang": route.lang, "brief": route.brief, "degraded": degraded,
+        "pending": pending, "lang": 'en' if router.detect_lang(message) == 'zh' or route.lang == 'zh' else route.lang, "brief": route.brief, "degraded": degraded,
         "eff_role": eff_role, "notes": notes,
         "new_state": {"role": author_role, "intent": intent, "pending": None, "project": project},
     }
     out = _route(intent, ctx)
+    out.reply = pilot_patch.polish_missing_fact(out.reply, ctx['lang'])
+    if router.detect_lang(message) == 'zh' or route.lang == 'zh':
+        out.reply = pilot_patch.localize_chinese(out.reply)
+        if out.reply.startswith('这项信息需要向主办方确认'):
+            out.fallback = True
+            out.matched = False
+            out.confidence = 'LOW'
+            notes.append('zh_translation:fallback')
     out.notes = notes
     _log(session_id, out, message)
     return out
@@ -297,7 +326,7 @@ def _route(intent: str, ctx: dict) -> EngineResult:
     if intent in ("greeting", "offtopic"):
         return reply_template(intent)
     if intent == "location" and lang == "en":
-        return reply_template("location")
+        return reply_template("hall_overview")
     if intent == "no_data":
         return _no_data(intent, author_role, new_state, lang)
     if intent == "gibberish":
@@ -320,6 +349,10 @@ def _route(intent: str, ctx: dict) -> EngineResult:
     new_state["intent"] = intent
 
     # --- Шаблонные маршруты со ссылками (routes.py) -----------------------------
+    if intent == 'catalog':
+        company_text = pilot_patch.company_reply(ctx['message'], lang)
+        if company_text:
+            return _result(company_text, intent, author_role, 'HIGH', state=new_state, matched=True)
     if intent in routes.TEMPLATE_INTENTS:
         key, prefix, suffix, offer = intent, "", "", False
         if intent == "visitor_registration" and new_state["project"] == "iagri":
@@ -331,6 +364,8 @@ def _route(intent: str, ctx: dict) -> EngineResult:
         elif intent == "contact" and handoff.is_configured():
             suffix, offer = OFFER_CONTACT[lang], True
         elif intent == "materials":
+            if ctx["pending"] and ctx["pending"].get("intent") == "materials":
+                return reply_template("materials_options")
             new_state["pending"] = {"kind": "topic", "intent": "materials"}
             return reply_template(key, confidence="MEDIUM", matched=False, clarified=True)
         return reply_template(key, prefix=prefix, suffix=suffix, offer=offer)
@@ -437,3 +472,4 @@ def _log(session_id: str, out: EngineResult, message: str) -> None:
             closest_intent=out.intent,
             confidence=out.confidence,
         )
+

@@ -1,26 +1,23 @@
-import json
-import time
 import uuid
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
 
 import chat_engine
 import kb_store
 from alice import router as alice_router
 from handoff import send_to_manager
-from log_paths import LOG_DIR
 import analytics
-import privacy
+import research_log
 
 BASE_DIR = Path(__file__).parent
 KB = kb_store.KB
-DIALOG_LOG = LOG_DIR / "dialogs.jsonl"
 
-app = FastAPI(title="AGRAVIA AI Chat Bot «Алиса»")
+app = FastAPI(title="ИИ-помощник АГРАВИИ")
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,15 +28,17 @@ app.add_middleware(
 
 
 class ChatRequest(BaseModel):
-    session_id: str | None = None
-    message: str
-    history: list[dict] = []  # [{"role": "user"/"assistant", "content": "..."}]
+    session_id: str | None = Field(default=None, max_length=128)
+    message: str = Field(min_length=1, max_length=4000)
+    history: list[dict] = Field(default_factory=list, max_length=20)
     # Состояние диалога (роль, прошлая тема, ожидаемое уточнение). Сервер ничего
     # не хранит: клиент присылает назад то, что получил в прошлом ответе.
     state: dict | None = None
     # Совместимость со старыми версиями виджета, присылавшими только роль.
     segment_hint: str | None = None
     debug: bool = False  # вернуть в ответе диагностику ошибок провайдера (для QA)
+    research_consent: bool = False
+    research_notice_version: str | None = None
 
 
 class ChatResponse(BaseModel):
@@ -53,6 +52,7 @@ class ChatResponse(BaseModel):
     role: str | None = None
     state: dict = {}
     debug: list[str] | None = None
+    research_recording: str = "disabled"
 
 
 class HandoffRequest(BaseModel):
@@ -63,12 +63,14 @@ class HandoffRequest(BaseModel):
     question: str
 
 
-def _log_dialog(**kwargs) -> None:
-    try:
-        with DIALOG_LOG.open("a", encoding="utf-8") as f:
-            f.write(json.dumps({**kwargs, "ts": time.time()}, ensure_ascii=False) + "\n")
-    except OSError:
-        pass  # best-effort: read-only FS (напр. serverless) не должен ронять ответ пользователю
+@app.get("/api/research-config")
+def research_config():
+    return research_log.config()
+
+
+@app.get("/api/research-notice", include_in_schema=False)
+def research_notice():
+    return FileResponse(BASE_DIR.parent / "research-notice.html", media_type="text/html")
 
 
 @app.get("/api/health")
@@ -86,29 +88,41 @@ def chat(req: ChatRequest):
     # Обычная (не async) функция: внутри блокирующие HTTP-вызовы к LLM,
     # FastAPI выполнит её в пуле потоков, не блокируя event loop.
     session_id = req.session_id or str(uuid.uuid4())
+    history = []
+    remaining = 20000
+    for turn in reversed(req.history):
+        content = turn.get("content")
+        if turn.get("role") not in {"user", "assistant"} or not isinstance(content, str):
+            continue
+        content = content[-min(4000, remaining):]
+        if content:
+            history.append({"role": turn["role"], "content": content})
+            remaining -= len(content)
+        if remaining <= 0:
+            break
+    history.reverse()
 
     try:
         result = chat_engine.handle_message(
-            session_id, req.message, history=req.history,
+            session_id, req.message, history=history,
             state=req.state, segment_hint=req.segment_hint,
         )
     except Exception as exc:  # LLM-провайдер недоступен и т.п. — не отдаём 500 в виджет
-        _log_dialog(session_id=session_id, message=privacy.redact(req.message), error=repr(exc))
         result = chat_engine.error_result(req.state)
         result.notes.append(f"answer: {exc!r}"[:500])
 
-    _log_dialog(
+    recording = research_log.record_turn(
         session_id=session_id,
-        segment=result.segment,
+        consent=req.research_consent,
+        notice_version=req.research_notice_version,
         intent=result.intent,
-        role=result.role,
-        confidence=result.confidence,
-        message=privacy.redact(req.message),
+        message=req.message,
         reply=result.reply,
-        matched=result.matched,
-        clarified=result.clarified,
+        turn=len(req.history) // 2,
         fallback=result.fallback,
     )
+    if req.debug and recording == "storage_error":
+        result.notes.append("research: " + research_log.diagnostic())
 
     return ChatResponse(
         session_id=session_id,
@@ -121,6 +135,7 @@ def chat(req: ChatRequest):
         role=result.role,
         state=result.state,
         debug=result.notes if req.debug else None,
+        research_recording=recording,
     )
 
 
@@ -149,3 +164,4 @@ app.include_router(alice_router)
 _WIDGET_DIR = BASE_DIR.parent / "widget"
 if _WIDGET_DIR.is_dir():
     app.mount("/widget", StaticFiles(directory=str(_WIDGET_DIR)), name="widget")
+

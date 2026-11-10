@@ -1,5 +1,5 @@
 /**
- * AGRAVIA AI chat widget «Алиса»
+ * AGRAVIA AI chat widget «ИИ-помощник АГРАВИИ»
  * Подключение на сайте:
  *   <script src="https://YOUR_BACKEND_HOST/widget/widget.js"
  *           data-api="https://YOUR_BACKEND_HOST/api"></script>
@@ -20,6 +20,8 @@
 
   // ---------- styles ----------
   var css = `
+  .agv-panel,.agv-panel *,.agv-launcher{box-sizing:border-box;}
+  .agv-launcher,.agv-send,.agv-close{padding:0;margin:0;min-width:0;}
   .agv-launcher{position:fixed;right:20px;bottom:20px;width:60px;height:60px;border-radius:50%;
     background:#2F6B3E;color:#fff;border:none;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;
     display:flex;align-items:center;justify-content:center;z-index:999999;transition:transform .15s ease;}
@@ -34,18 +36,49 @@
     display:flex;align-items:center;justify-content:center;font-weight:700;color:#26421C;}
   .agv-header .agv-title{font-weight:600;font-size:15px;line-height:1.2;}
   .agv-header .agv-sub{font-size:12px;opacity:.85;}
-  .agv-close{margin-left:auto;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;}
-  .agv-body{flex:1;overflow-y:auto;padding:14px;background:#FAFAF7;display:flex;flex-direction:column;gap:10px;}
+  .agv-header{flex-shrink:0;}
+  .agv-header-copy{flex:1;min-width:0;}
+  .agv-settings-btn,.agv-close{flex-shrink:0;background:none;border:none;color:#fff;cursor:pointer;line-height:1;width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;}
+  .agv-close{font-size:22px;}
+  .agv-settings-btn{position:relative;}
+  .agv-settings-btn svg{width:20px;height:20px;}
+  .agv-settings-btn[data-recording="true"]:after{content:"";position:absolute;right:0;top:1px;width:7px;height:7px;background:#D7F5A8;border-radius:50%;}
+  .agv-settings-btn:focus-visible,.agv-close:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+  .agv-settings{flex:1;min-height:0;overflow-y:auto;padding:20px 16px;color:#1F2A1C;background:#FAFAF7;font-size:13px;line-height:1.5;}
+  .agv-settings[hidden],.agv-settings-btn[hidden],.agv-body[hidden],.agv-footer[hidden]{display:none;}
+  .agv-settings h3{font-size:16px;margin:0 0 16px;}
+  .agv-settings label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;}
+  .agv-settings input{flex-shrink:0;width:18px;height:18px;margin:2px 0 0;accent-color:#2F6B3E;}
+  .agv-settings p{margin:12px 0;color:#52604E;}
+  .agv-settings a{color:#1c5a2c;text-decoration:underline;}
+  .agv-settings-done{display:block;margin-top:20px;border:0;border-radius:20px;padding:9px 18px;background:#2F6B3E;color:#fff;cursor:pointer;font-size:13px;}
+  .agv-research-invite{flex-shrink:0;margin:0 10px 8px;padding:11px 12px 9px;border:1px solid #e0e9da;border-radius:12px;background:linear-gradient(120deg,#f4f8f0,#fcfdfb);color:#30452b;font-size:12px;line-height:1.4;}
+  .agv-research-invite[hidden]{display:none;}
+  .agv-research-invite label{display:flex;align-items:flex-start;gap:10px;cursor:pointer;}
+  .agv-research-invite input{appearance:none;-webkit-appearance:none;flex-shrink:0;display:grid;place-content:center;width:20px;height:20px;padding:0;margin:1px 0 0;border:1.5px solid #8da582;border-radius:6px;background:#fff;cursor:pointer;transition:background .15s,border-color .15s;}
+  .agv-research-invite input:checked{background:#2F6B3E;border-color:#2F6B3E;}
+  .agv-research-invite input:checked:after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg);}
+  .agv-research-invite input:focus-visible{outline:2px solid #2F6B3E;outline-offset:3px;}
+  .agv-research-copy{min-width:0;}
+  .agv-research-copy strong{display:block;font-size:13px;font-weight:600;letter-spacing:0;}
+  .agv-research-copy small{display:block;margin-top:2px;color:#56654e;font-size:11.5px;line-height:1.4;}
+  .agv-research-invite .agv-research-actions{display:flex;align-items:center;justify-content:space-between;margin:6px 0 0 30px;gap:8px;}
+  .agv-research-invite a,.agv-research-invite button{font:inherit;font-size:11.5px;color:#526d49;text-decoration:none;}
+  .agv-research-invite a{text-decoration:underline;text-underline-offset:3px;text-decoration-color:#afc0a7;}
+  .agv-research-invite button{border:0;border-radius:6px;background:transparent;padding:3px 6px;margin-right:-6px;cursor:pointer;}
+  .agv-research-invite button:hover{background:#e7efdf;}
+  .agv-footer{flex-shrink:0;}
+  .agv-body{flex:1;min-height:0;overflow-y:auto;padding:14px;background:#FAFAF7;display:flex;flex-direction:column;gap:10px;}
   .agv-msg{max-width:85%;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.45;white-space:pre-wrap;}
   .agv-msg.bot{background:#EDF3EA;color:#1F2A1C;align-self:flex-start;border-bottom-left-radius:2px;}
-  .agv-msg a{color:#1c5a2c;text-decoration:underline;word-break:break-all;}
+  .agv-msg a{color:#1c5a2c;text-decoration:underline;word-break:normal;overflow-wrap:anywhere;}
     .agv-msg.user{background:#2F6B3E;color:#fff;align-self:flex-end;border-bottom-right-radius:2px;}
   .agv-choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .agv-choice-btn{border:1px solid #2F6B3E;color:#2F6B3E;background:#fff;border-radius:20px;
     padding:7px 12px;font-size:13px;cursor:pointer;transition:background .15s;}
   .agv-choice-btn:hover{background:#EDF3EA;}
   .agv-footer{border-top:1px solid #eee;padding:10px;display:flex;gap:8px;background:#fff;}
-  .agv-input{flex:1;border:1px solid #ddd;border-radius:20px;padding:9px 14px;font-size:13.5px;outline:none;}
+  .agv-input{flex:1;min-width:0;border:1px solid #ddd;border-radius:20px;padding:9px 14px;font-size:13.5px;outline:none;}
   .agv-input:focus{border-color:#2F6B3E;}
   .agv-send{background:#2F6B3E;color:#fff;border:none;border-radius:50%;width:38px;height:38px;
     cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -72,12 +105,13 @@
   panel.innerHTML =
     '<div class="agv-header">' +
     '  <div class="agv-avatar">А</div>' +
-    '  <div><div class="agv-title">Алиса</div><div class="agv-sub">помощник AGRAVIA</div></div>' +
+    '  <div class="agv-header-copy"><div class="agv-title">ИИ-помощник АГРАВИИ</div><div class="agv-sub">Выставка AGRAVIA</div></div>' +
+    '  <button class="agv-settings-btn" aria-label="Настройки чата" aria-expanded="false" aria-controls="agv-chat-settings" title="Настройки чата" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1z"/><circle cx="12" cy="12" r="3"/></svg></button>' +
     '  <button class="agv-close" aria-label="Закрыть">×</button>' +
     "</div>" +
     '<div class="agv-body"></div>' +
     '<div class="agv-footer">' +
-    '  <input class="agv-input" type="text" placeholder="Напишите вопрос..." />' +
+    '  <input class="agv-input" type="text" maxlength="4000" placeholder="Напишите вопрос..." />' +
     '  <button class="agv-send" aria-label="Отправить">➤</button>' +
     "</div>";
 
@@ -88,6 +122,118 @@
   var input = panel.querySelector(".agv-input");
   var sendBtn = panel.querySelector(".agv-send");
   var closeBtn = panel.querySelector(".agv-close");
+  var settingsBtn = panel.querySelector(".agv-settings-btn");
+  var settingsView = null;
+  var researchInvite = null;
+  var footer = panel.querySelector(".agv-footer");
+  function showSettings(open) {
+    if (!settingsView) return;
+    settingsView.hidden = !open;
+    if (open && researchInvite) researchInvite.hidden = true;
+    body.hidden = open;
+    footer.hidden = open;
+    settingsBtn.setAttribute("aria-expanded", String(open));
+    if (open) researchChoice.focus();
+    else settingsBtn.focus();
+  }
+  settingsBtn.onclick = function () { showSettings(settingsBtn.getAttribute("aria-expanded") !== "true"); };
+  panel.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && settingsView && !settingsView.hidden) {
+      showSettings(false); event.stopPropagation();
+    }
+  });
+  var researchChoice = null;
+  var researchVersion = null;
+  var researchConfigLoaded = false;
+
+  function loadResearchChoice() {
+    if (researchConfigLoaded) return;
+    researchConfigLoaded = true;
+    fetch(API_BASE + "/research-config")
+      .then(function (r) { if (!r.ok) throw new Error("config unavailable"); return r.json(); })
+      .then(function (cfg) {
+        if (!cfg.enabled || !cfg.notice_url) return;
+        var url = new URL(cfg.notice_url);
+        if (url.protocol !== "https:" || (url.hostname !== "agravia.org" &&
+            url.hostname !== "d5daon1oep4l58a9tuca.jki8ffxa.apigw.yandexcloud.net")) return;
+        researchVersion = cfg.notice_version;
+        var wrap = document.createElement("div");
+        wrap.className = "agv-settings";
+        wrap.id = "agv-chat-settings";
+        wrap.hidden = true;
+        var heading = document.createElement("h3");
+        heading.textContent = "Запись для улучшения ответов";
+        wrap.appendChild(heading);
+        var label = document.createElement("label");
+        researchChoice = document.createElement("input");
+        researchChoice.type = "checkbox";
+        researchChoice.checked = false;
+        label.appendChild(researchChoice);
+        label.appendChild(document.createTextNode("Разрешаю сохранять сообщения этого чата для проверки и улучшения ответов на срок до 30 дней. "));
+        var link = document.createElement("a");
+        link.href = url.href; link.target = "_blank"; link.rel = "noopener noreferrer";
+        link.textContent = "Условия обработки";
+        wrap.appendChild(label);
+        var note = document.createElement("p");
+        note.textContent = "Выключено по умолчанию. Можно пользоваться помощником без записи для анализа. После снятия галочки следующие сообщения не сохраняются в архив проверки; для удаления прежних записей используйте контакт в условиях.";
+        wrap.appendChild(note);
+        wrap.appendChild(link);
+        var caution = document.createElement("p");
+        caution.textContent = "Не присылайте личные и секретные данные.";
+        wrap.appendChild(caution);
+        var done = document.createElement("button");
+        done.className = "agv-settings-done";
+        done.textContent = "Вернуться к чату";
+        done.onclick = function () { showSettings(false); input.focus(); };
+        wrap.appendChild(done);
+        panel.insertBefore(wrap, footer);
+        settingsView = wrap;
+        settingsBtn.hidden = false;
+        function updateResearchChoice() {
+          settingsBtn.setAttribute("data-recording", String(researchChoice.checked));
+          settingsBtn.title = researchChoice.checked ? "Настройки чата: запись для анализа включена" : "Настройки чата: запись для анализа выключена";
+          if (researchInvite) researchInvite.hidden = true;
+          showSettings(false);
+        }
+        researchChoice.addEventListener("change", updateResearchChoice);
+
+        researchInvite = document.createElement("div");
+        researchInvite.className = "agv-research-invite";
+        var inviteLabel = document.createElement("label");
+        var inviteChoice = document.createElement("input");
+        inviteChoice.type = "checkbox";
+        inviteChoice.checked = false;
+        inviteLabel.appendChild(inviteChoice);
+        var inviteCopy = document.createElement("span");
+        inviteCopy.className = "agv-research-copy";
+        var inviteTitle = document.createElement("strong");
+        inviteTitle.textContent = "Помочь улучшить ответы";
+        var inviteDescription = document.createElement("small");
+        inviteDescription.textContent = "Разрешаю запись этого чата до 30 дней.";
+        inviteCopy.appendChild(inviteTitle);
+        inviteCopy.appendChild(inviteDescription);
+        inviteLabel.appendChild(inviteCopy);
+        researchInvite.appendChild(inviteLabel);
+        var actions = document.createElement("div");
+        actions.className = "agv-research-actions";
+        var inviteLink = document.createElement("a");
+        inviteLink.href = url.href; inviteLink.target = "_blank"; inviteLink.rel = "noopener noreferrer";
+        inviteLink.textContent = "Как используются сообщения";
+        actions.appendChild(inviteLink);
+        var skip = document.createElement("button");
+        skip.textContent = "Не сейчас";
+        skip.onclick = function () { researchInvite.hidden = true; input.focus(); };
+        actions.appendChild(skip);
+        researchInvite.appendChild(actions);
+        inviteChoice.addEventListener("change", function () {
+          researchChoice.checked = inviteChoice.checked;
+          updateResearchChoice();
+          input.focus();
+        });
+        panel.insertBefore(researchInvite, footer);
+      })
+      .catch(function () { /* Missing config never enables research recording. */ });
+  }
 
   function scrollDown() {
     body.scrollTop = body.scrollHeight;
@@ -104,7 +250,21 @@
       if (t) { trail = t[0]; url = url.slice(0, url.length - trail.length); }
       el.appendChild(document.createTextNode(text.slice(last, m.index)));
       var a = document.createElement("a");
-      a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = url;
+      a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.textContent = url;
+      try {
+        var parsed = new URL(url);
+        var labels = {'/reg':'Регистрация','/reg_en':'Registration','/participants':'Каталог участников','/program':'Деловая программа','/organizer':'Контакты организатора','/competition':'Конкурс','/tourist':'Поездка и приглашение','/book1':'Заявка на участие'};
+        if (!/[А-Яа-яЁё]/.test(text)) {
+          labels = /[\u4e00-\u9fff]/.test(text)
+            ? {'/reg':'参观登记','/reg_en':'参观登记','/participants':'参展商名录','/program':'活动日程','/organizer':'联系主办方','/competition':'评选活动','/tourist':'旅行与邀请函','/book1':'参展申请'}
+            : {'/reg':'Registration','/reg_en':'Registration','/participants':'Exhibitor catalog','/program':'Business program','/organizer':'Organizer contacts','/competition':'Competition','/tourist':'Travel and invitations','/book1':'Exhibitor application'};
+        }
+        if (parsed.hostname === 'agravia.org' && !parsed.search && !parsed.hash) {
+          a.textContent = labels[parsed.pathname] || parsed.hostname + parsed.pathname;
+          a.title = url;
+        }
+      } catch (_) { /* Keep the original text for an unexpected URL. */ }
       el.appendChild(a);
       if (trail) el.appendChild(document.createTextNode(trail));
       last = m.index + m[0].length;
@@ -142,7 +302,7 @@
     if (on && !existing) {
       var t = document.createElement("div");
       t.className = "agv-typing";
-      t.textContent = "Алиса печатает…";
+      t.textContent = "Помощник печатает…";
       body.appendChild(t);
       scrollDown();
     } else if (!on && existing) {
@@ -259,6 +419,7 @@
   }
 
   function sendMessage() {
+    if (sendBtn.disabled) return;
     var text = input.value.trim();
     if (!text) return;
     input.value = "";
@@ -266,19 +427,29 @@
     state.history.push({ role: "user", content: text });
     setTyping(true);
     sendBtn.disabled = true;
+    var controller = new AbortController();
+    var requestTimer = setTimeout(function () { controller.abort(); }, 35000);
 
     fetch(API_BASE + "/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
       body: JSON.stringify({
         session_id: state.sessionId,
         state: state.convState, // роль/тема/уточнение — бэкенд ничего не хранит, состояние носит клиент
         message: text,
-        history: state.history.slice(0, -1), // без последнего user-сообщения, оно уже в message
+        history: state.history.slice(0, -1).slice(-20),
+        research_consent: Boolean(researchChoice && researchChoice.checked),
+        research_notice_version: researchChoice && researchChoice.checked ? researchVersion : null,
       }),
     })
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) { var error = new Error("chat request failed"); error.status = r.status; throw error; }
+        return r.json();
+      })
       .then(function (data) {
+        if (typeof data.reply !== "string" || !data.reply.trim()) throw new Error("empty reply");
+        clearTimeout(requestTimer);
         state.sessionId = data.session_id;
         state.segment = data.segment;
         state.convState = data.state || null;
@@ -290,10 +461,17 @@
           askHandoffConsent(text);
         }
       })
-      .catch(function () {
+      .catch(function (error) {
+        clearTimeout(requestTimer);
         setTyping(false);
         sendBtn.disabled = false;
-        addMessage("Произошла ошибка соединения. Попробуйте ещё раз.", "bot");
+        if (state.history.length && state.history[state.history.length - 1].role === "user") state.history.pop();
+        var message = error.status === 429 || error.status === 503 || error.name === "AbortError"
+          ? "Сейчас помощник занят или отвечает слишком долго. Попробуйте через минуту."
+          : error.status === 422 || error.status === 413
+          ? "Пожалуйста, сократите вопрос и попробуйте ещё раз."
+          : "Не удалось получить ответ. Попробуйте ещё раз чуть позже.";
+        addMessage(message + " Регистрация: https://agravia.org/reg. Контакты организатора: https://agravia.org/organizer.", "bot");
       });
   }
 
@@ -305,6 +483,7 @@
   launcher.onclick = function () {
     state.open = !state.open;
     panel.style.display = state.open ? "flex" : "none";
+    if (state.open) loadResearchChoice();
     if (state.open && body.children.length === 0) showGreeting();
   };
   closeBtn.onclick = function () {
@@ -312,3 +491,4 @@
     panel.style.display = "none";
   };
 })();
+

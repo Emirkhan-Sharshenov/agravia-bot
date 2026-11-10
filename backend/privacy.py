@@ -27,3 +27,4 @@ def redact_history(history: list[dict]) -> list[dict]:
         {**turn, "content": redact(turn.get("content", ""))} if turn.get("role") == "user" else turn
         for turn in history
     ]
+

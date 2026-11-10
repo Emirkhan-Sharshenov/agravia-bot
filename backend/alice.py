@@ -179,3 +179,4 @@ async def alice_webhook(request: Request):
     # fallback — не должны сюда попасть, но на всякий случай сбрасываем стейт
     SESSIONS[session_id] = _new_state()
     return _reply(session_meta, GREETING)
+

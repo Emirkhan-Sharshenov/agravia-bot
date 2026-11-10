@@ -43,6 +43,38 @@ LINK_AFTER = {
 # Шаблоны: intent -> {"ru": ..., "en": ...}. Плейсхолдеры {ключ} берутся из LINKS и
 # констант выше. Если английского варианта нет — используется русский.
 TEMPLATES: dict[str, dict[str, str]] = {
+    "attendance_confirmation": {
+        "ru": "На стойке регистрации организатор может поставить печать в командировочном листе. Подтверждение посещения через чат я не выдаю. Если нужен другой документ, уточните у организатора: {organizer_phone}, {organizer}.",
+        "en": "The organizer can stamp your business trip document at the registration desk. I cannot issue attendance confirmation through this chat. If you need another document, contact the organizer: {organizer_phone}, {organizer}.",
+    },
+    "materials_options": {
+        "ru": "Готовые баннеры для приглашения клиентов: {banners}. Если нужны печать, оформление или материалы для застройки стенда, уточните задачу у своего менеджера или организатора: {organizer}.",
+        "en": "Ready-made banners for inviting clients: {banners}. For stand printing, decoration or construction materials, please discuss your requirements with your manager or the organizer: {organizer}.",
+    },
+    "unified_ticket": {
+        "ru": "Повторная регистрация не нужна: один билет действует на AGRAVIA и iAGRI и на все три дня выставки, 20-22 января 2027 года. Если билета ещё нет, зарегистрируйтесь бесплатно: {reg}.",
+        "en": "No second registration is needed: one ticket covers AGRAVIA and iAGRI on all three days, 20-22 January 2027. If you do not have a ticket yet, register for free: {reg_en}.",
+    },
+    "registration_complete": {
+        "ru": "Если регистрация завершена и билет получен, сохраните электронный билет на телефоне: распечатывать его необязательно. Он действует на AGRAVIA и iAGRI и на все три дня выставки. Если письмо или билет не пришли, обратитесь в поддержку регистрации: {support}.",
+        "en": "If registration is complete and you have received your ticket, save it on your phone; printing is optional. It covers AGRAVIA and iAGRI on all three days. If the email or ticket has not arrived, contact registration support: {support_en}.",
+    },
+    "international_registration": {
+        "ru": "Для иностранных посетителей используйте официальную бесплатную регистрацию: {reg}. Если форма не принимает ваши данные или возникает ошибка, обратитесь в поддержку регистрации: {support}.",
+        "en": "International visitors can use the official free registration: {reg_en}. If the form does not accept your details or shows an error, contact registration support: {support_en}.",
+    },
+    "safe_payment": {
+        "ru": "Не переводите деньги на личную карту по сообщению в чате. Уточните официальный порядок оплаты и реквизиты у организатора: {organizer_phone}, {organizer}. Я не подтверждаю реквизиты и не принимаю оплату.",
+        "en": "Do not transfer money to a personal card based on a chat message. Verify the official payment process and bank details with the organizer: {organizer_phone}, {organizer}. I cannot confirm payment details or accept payments.",
+    },
+    "payment_currency": {
+        "ru": "Подтверждённой информации о доступных валютах оплаты у меня нет. Уточните условия у организатора: {organizer_phone}, {organizer}. Я не могу подтвердить приём оплаты в долларах или евро.",
+        "en": "I do not have confirmed information about accepted payment currencies. Please check with the organizer: {organizer_phone}, {organizer}. I cannot confirm payment in US dollars or euros.",
+    },
+    "discount_confirmation": {
+        "ru": "Подтвердить индивидуальную скидку или бесплатное участие я не могу. Уточните договорённость у своего менеджера или организатора: {organizer_phone}, {organizer}.",
+        "en": "I cannot confirm an individual discount or free participation. Please verify the agreement with your manager or the organizer: {organizer_phone}, {organizer}.",
+    },
     "dates": {
         "ru": "AGRAVIA 2027 пройдёт 20–22 января 2027 года в МВЦ «Крокус Экспо», павильон 3. "
               "Часы работы: 20 и 21 января — 09:00–18:00, 22 января — 09:00–16:00.",
@@ -245,6 +277,8 @@ TEMPLATES: dict[str, dict[str, str]] = {
     },
 }
 
+from pilot_patch import TEMPLATES as PILOT_TEMPLATES
+TEMPLATES.update(PILOT_TEMPLATES)
 TEMPLATE_INTENTS = {k for k in TEMPLATES if k not in ("no_data", "unavailable", "location")}
 
 
@@ -270,3 +304,4 @@ def link_after(intent: str, lang: str = "ru") -> str | None:
     link_key, ru, en = spec
     key = "reg_en" if (lang == "en" and link_key == "reg") else link_key
     return (en if lang == "en" else ru).format(url=LINKS[key])
+

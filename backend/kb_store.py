@@ -27,3 +27,4 @@ def all_items() -> list[dict]:
         for entry in entries:
             items.append({"segment": segment, **entry})
     return items
+

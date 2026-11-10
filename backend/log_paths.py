@@ -28,3 +28,4 @@ def _resolve() -> Path:
 
 
 LOG_DIR = _resolve()
+
