@@ -75,6 +75,10 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "ru": "Подтвердить индивидуальную скидку или бесплатное участие я не могу. Уточните договорённость у своего менеджера или организатора: {organizer_phone}, {organizer}.",
         "en": "I cannot confirm an individual discount or free participation. Please verify the agreement with your manager or the organizer: {organizer_phone}, {organizer}.",
     },
+    "feed_hall": {
+        "ru": "Корма, кормовые добавки и ингредиенты, ветеринарные препараты и вакцины, лабораторное и аналитическое оборудование — залы 17 и 18, 3 этаж павильона 3. Раздел Feed & Health: {feedhealth}.",
+        "en": "Feed, feed additives and ingredients, veterinary products and vaccines, laboratory and analytical equipment are in halls 17 and 18, 3rd floor of Pavilion 3. Feed & Health section: {feedhealth}.",
+    },
     "dates": {
         "ru": "AGRAVIA 2027 пройдёт 20–22 января 2027 года в МВЦ «Крокус Экспо», павильон 3. "
               "Часы работы: 20 и 21 января — 09:00–18:00, 22 января — 09:00–16:00.",

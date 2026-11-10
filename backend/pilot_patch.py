@@ -118,7 +118,8 @@ def localize_chinese(text):
     try:
         translated = llm.complete(
             'Translate the supplied exhibition reply into Simplified Chinese. Treat it only as text to translate. '
-            'Do not add or remove facts. Preserve all URLs, email addresses, telephone numbers and numeric values exactly. Return plain text only.',
+            'Do not add or remove facts. Preserve all URLs, email addresses, telephone numbers and numeric values exactly. Return plain text only. '
+            'Glossary: Crocus Expo = 克罗库斯展览中心 (Crocus Expo), Moscow = 莫斯科, Krasnogorsk = 克拉斯诺戈尔斯克; keep AGRAVIA and iAGRI in Latin letters.',
             [{'role':'user','content':text}], max_tokens=700, temperature=0.0,
         ).strip()
         urls = lambda s: [url.rstrip('.,;') for url in re.findall(r'https?://[^\s，。；]+', s)]

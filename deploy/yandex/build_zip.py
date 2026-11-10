@@ -28,6 +28,7 @@ subprocess.check_call([
 shutil.copy(HERE / "yc_entry.py", WORK / "yc_entry.py")
 shutil.copytree(REPO / "backend", WORK / "backend", ignore=lambda d, names: [n for n in names if n in SKIP_BACKEND or n.endswith(".pyc")])
 shutil.copytree(REPO / "widget", WORK / "widget")
+shutil.copy(REPO / "research-notice.html", WORK / "research-notice.html")
 for junk in list(WORK.rglob("__pycache__")) + list(WORK.rglob("*.dist-info")) + list(WORK.rglob("tests")):
     shutil.rmtree(junk, ignore_errors=True)
 

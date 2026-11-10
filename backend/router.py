@@ -204,6 +204,12 @@ def mentions_secret(message: str) -> bool:
 # (ошибки классификации на проверочных сценариях):
 # (intent, regex, из каких интентов переопределять; None — из любых)
 _KEYWORD_OVERRIDES = (
+    # Грузовой подъезд к монтажным воротам — логистика экспонента, а не маршрут на метро.
+    ("equipment_in", re.compile(r"монтажн\w*\s+ворот|ворот\w*.{0,20}павильон|куда.{0,20}(на\s+)?разгрузк", re.I),
+     {"travel_directions", "visit_plan", "location", "vehicle_access", "general", "other"}),
+    # Подтверждено сотрудником заказчика (отзыв тестировщика 06.11): корма/ветеринария/лаборатории — залы 17-18.
+    ("feed_hall", re.compile(r"(в\s+каком\s+зал|какой\s+зал|где\s+наход|which\s+hall).{0,60}(корм|добавк|ингредиент|ветеринар|вакцин|лаборатор|аналитическ)|(корм|добавк|ингредиент|ветеринар|вакцин|лаборатор|аналитическ).{0,40}(в\s+каком\s+зал|какой\s+зал|which\s+hall)", re.I),
+     {"catalog", "location", "industry_feed", "feed_needs", "industry_other", "general", "other"}),
     ("attendance_confirmation", re.compile(r"командировочн|подтверждени\w*.{0,30}посещени", re.I),
      {"visitor_registration", "general", "other", "contact", "attendance_confirmation"}),
     ("montage", re.compile(r"(собира\w*|собрат\w*|сборк\w*).{0,25}стенд|стенд.{0,25}(собира\w*|собрат\w*|сборк\w*)", re.I),
